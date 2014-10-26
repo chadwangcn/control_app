@@ -51,7 +51,7 @@ class CreateMethod( QtGui.QDialog ):
         
     
     def OnAutoName(self):
-        self.filename = "自动测试方法"
+        self.filename = "auto_save_cfg"
         self.dlg.FileName.setText(self.filename)
         
     
