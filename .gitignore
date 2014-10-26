@@ -2,6 +2,11 @@
 __pycache__/
 *.py[cod]
 
+# documentation
+*.txt
+*.doc 
+doc/
+
 # C extensions
 *.so
 
