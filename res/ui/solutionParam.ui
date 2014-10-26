@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>510</width>
+    <height>381</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>参数设置</string>
+  </property>
+  <widget class="QToolBox" name="toolBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>481</width>
+     <height>331</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>2</number>
+   </property>
+   <widget class="QWidget" name="page_fid">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>481</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <attribute name="label">
+     <string>检测器FID设置</string>
+    </attribute>
+    <widget class="QPushButton" name="pbZero">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>140</y>
+       <width>171</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>调零</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="rangFID">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>90</y>
+       <width>91</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>10000</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>1000</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>100</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>52</x>
+       <y>82</y>
+       <width>45</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>量程：</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="Temp_FID">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>10</y>
+       <width>91</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>52</x>
+       <y>12</y>
+       <width>45</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>温度：</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="MaxTemp_FID">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>50</y>
+       <width>81</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>52</x>
+       <y>47</y>
+       <width>74</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>极限温度：</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="page_tcd">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>481</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <attribute name="label">
+     <string>检测器TCD设置</string>
+    </attribute>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>43</x>
+       <y>13</y>
+       <width>33</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>温度:</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="Temp_TCD">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>10</y>
+       <width>101</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="MaxTemp_TCD">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>50</y>
+       <width>91</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>60</y>
+       <width>74</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>极限温度：</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>49</x>
+       <y>110</y>
+       <width>45</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>桥流：</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="BridgeCur_TCD">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>100</y>
+       <width>91</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="LoadGasTCD">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>150</y>
+       <width>91</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>氢气</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>氮气</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>49</x>
+       <y>150</y>
+       <width>45</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>载气：</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="page_extenion">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>481</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <attribute name="label">
+     <string>辅温箱设置</string>
+    </attribute>
+    <widget class="QLabel" name="label_15">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>60</y>
+       <width>66</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>温箱2：</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_16">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>100</y>
+       <width>66</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>温箱3：</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="Temp2_assistBox">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>50</y>
+       <width>141</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_14">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>20</y>
+       <width>66</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>温箱1：</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="Temp1_assistBox">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>10</y>
+       <width>141</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="Temp3_assistBox">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>90</y>
+       <width>141</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="page_gasbox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>481</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <attribute name="label">
+     <string>汽化室设置</string>
+    </attribute>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>60</y>
+       <width>77</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>极限温度： </string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="MaxTemp_GasBox">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>60</y>
+       <width>101</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_10">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>20</y>
+       <width>45</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>温度：</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="Temp_GasBox">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>20</y>
+       <width>101</width>
+       <height>27</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="page_const">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>481</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <attribute name="label">
+     <string>恒温设置</string>
+    </attribute>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>72</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>温度:</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="Temp_Const">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>20</y>
+       <width>91</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTimeEdit" name="Time_Const">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>60</y>
+       <width>121</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>60</y>
+       <width>72</width>
+       <height>15</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>时间:</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="pbNext">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>340</y>
+     <width>98</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>下一步</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pbPrevious">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>340</y>
+     <width>98</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>上一步</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
