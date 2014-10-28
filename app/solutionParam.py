@@ -167,6 +167,9 @@ class solutionParam(QtGui.QDialog):
                 print "Temp1_AssistBox "  + str(self.SolutionParamSet.Temp1_AssistBox)
                 print "Temp2_AssistBox "  + str(self.SolutionParamSet.Temp2_AssistBox)
                 print "Temp3_AssistBox "  + str(self.SolutionParamSet.Temp3_AssistBox)
+            
+            self.SolutionParamSet.Temp_Const = self.dlg.Temp_Const.value()
+            self.SolutionParamSet.Time_Const = self.dlg.Time_Const.value()
                         
         except Exception,e:
             traceback.print_exc()   

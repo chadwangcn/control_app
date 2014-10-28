@@ -217,10 +217,12 @@ class SolutionParamSet(object):
             print root.toprettyxml()
             print dom.toprettyxml()
             
+            '''
             _file_path = os.path.dirname(_fileName)
             if os.path.exists(_file_path) == False:
                 os.mkdir(_file_path)
-                
+               '''
+             
             stream = open(_fileName, 'w')  
             dom.writexml( stream,addindent='  ', newl='\n',encoding='utf-8')            
             stream.close()  
