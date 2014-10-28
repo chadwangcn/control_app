@@ -26,7 +26,7 @@ class Solution_Mrg( QtGui.QDialog ):
         QTextCodec.setCodecForCStrings(QTextCodec.codecForName("UTF-8"))
         self.SolutionParamSet = None
         self.dlg= uic.loadUi( UI_PATH+UI_MAIN_WIN, self )
-        
+        self.default_folder_path = os.getcwd()
         self.bindUI()
         self.load_data()
        
@@ -111,13 +111,15 @@ class Solution_Mrg( QtGui.QDialog ):
     def OnImport(self):
         try:
             self.SolutionParamSet = SolutionParamSet.SolutionParamSet()
-            tmpPath = QtGui.QFileDialog.getOpenFileName()
+            tmpPath = QtGui.QFileDialog.getOpenFileName(None,"",
+                                                        self.default_folder_path,"",
+                                                        None)
             if self.SolutionParamSet.ReadCfg(tmpPath) == False:
                 raise Exception("segment cnt", "error") 
         except Exception,e:
             print Exception,":",e
             traceback.print_exc()  
-            QtGui.QMessageBox.information( self, "方法", "打开方法错误" )
+            QtGui.QMessageBox.information( self, "方法", "导入方法错误" )
     
     def OnEdit(self):
         try:            
@@ -143,7 +145,9 @@ class Solution_Mrg( QtGui.QDialog ):
             
     def OnSaveAs(self):
         print "On OnSaveAs"
-        tmpPath = QtGui.QFileDialog.getSaveFileName()
+        tmpPath = QtGui.QFileDialog.getSaveFileName(None,"",
+                                                        self.default_folder_path,"",
+                                                        None)
         if tmpPath != "" and self.SolutionParamSet != None:
             if self.SolutionParamSet.SaveCfg( tmpPath ):
                 print "save ok"
