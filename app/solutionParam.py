@@ -167,9 +167,17 @@ class solutionParam(QtGui.QDialog):
                 print "Temp1_AssistBox "  + str(self.SolutionParamSet.Temp1_AssistBox)
                 print "Temp2_AssistBox "  + str(self.SolutionParamSet.Temp2_AssistBox)
                 print "Temp3_AssistBox "  + str(self.SolutionParamSet.Temp3_AssistBox)
+                
+            print "H:" + str(self.dlg.Temp_Const_h.value()) + \
+                  "M:"+ str(self.dlg.Temp_Const_m.value())  + \
+                  "S:"+ str(self.dlg.Temp_Const_s.value())
             
             self.SolutionParamSet.Temp_Const = self.dlg.Temp_Const.value()
-            self.SolutionParamSet.Time_Const = self.dlg.Time_Const.value()
+            self.SolutionParamSet.Time_Const = int(self.dlg.Temp_Const_h.value() ) *60*60 + \
+                                               int(self.dlg.Temp_Const_m.value() ) *60 +\
+                                               int(self.dlg.Temp_Const_s.value() ) 
+                                               
+            
                         
         except Exception,e:
             traceback.print_exc()   
