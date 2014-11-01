@@ -29,7 +29,7 @@ class Solution_Mrg( QtGui.QDialog ):
         self.default_folder_path = os.getcwd()
         self.bindUI()
         self.load_data()
-       
+        self.__FILTER_TAG__ = "Cfg Data (*.jxc)"
         
         
     def bindUI(self):        
@@ -112,7 +112,7 @@ class Solution_Mrg( QtGui.QDialog ):
         try:
             self.SolutionParamSet = SolutionParamSet.SolutionParamSet()
             tmpPath = QtGui.QFileDialog.getOpenFileName(None,"",
-                                                        self.default_folder_path,"",
+                                                        self.default_folder_path,self.__FILTER_TAG__,
                                                         None)
             if self.SolutionParamSet.ReadCfg(tmpPath) == False:
                 raise Exception("segment cnt", "error") 
@@ -146,7 +146,7 @@ class Solution_Mrg( QtGui.QDialog ):
     def OnSaveAs(self):
         print "On OnSaveAs"
         tmpPath = QtGui.QFileDialog.getSaveFileName(None,"",
-                                                        self.default_folder_path,"",
+                                                        self.default_folder_path,self.__FILTER_TAG__,
                                                         None)
         if tmpPath != "" and self.SolutionParamSet != None:
             if self.SolutionParamSet.SaveCfg( tmpPath ):
