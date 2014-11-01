@@ -26,6 +26,11 @@ class SwitchParam(object):
         self.timestamp = 0  
         self.action = ""   # close/open
         
+        
+__DEFAULT_VALUE__ = 0
+__DEFAULT_TEMP__ = 60
+__DEFAULT_MAX_TEMP__ = 300
+        
 
 class SolutionParamSet(object):
     '''
@@ -56,45 +61,45 @@ class SolutionParamSet(object):
         '''
             
         '''
-        self.Temp_TCD = 0.0
-        self.MaxTemp_TCD = 0.0 
+        self.Temp_TCD = __DEFAULT_TEMP__
+        self.MaxTemp_TCD = __DEFAULT_MAX_TEMP__ 
         self.LoadGas_TCD = ""
-        self.BridgeCur_TCD = 0.0 
-        self.ZoomCoin_TCD  = 0
+        self.BridgeCur_TCD = __DEFAULT_VALUE__ 
+        self.ZoomCoin_TCD  = __DEFAULT_VALUE__
         self.Polar_TCD = ""
         
         '''
          
         '''
-        self.Temp_FID = 0.0 
-        self.MaxTemp_FID = 0.0 
+        self.Temp_FID = __DEFAULT_TEMP__ 
+        self.MaxTemp_FID = __DEFAULT_MAX_TEMP__ 
         self.Range_FID = 0.0
         
         '''
           
         '''
-        self.Temp_GasBox = 0.0 
-        self.MaxTemp_GasBox = 0.0
+        self.Temp_GasBox = __DEFAULT_TEMP__ 
+        self.MaxTemp_GasBox = __DEFAULT_MAX_TEMP__
         
         '''
        
         '''
-        self.Temp1_AssistBox = 0.0 
-        self.Temp2_AssistBox = 0.0 
-        self.Temp3_AssistBox = 0.0
+        self.Temp1_AssistBox = __DEFAULT_TEMP__ 
+        self.Temp2_AssistBox = __DEFAULT_TEMP__ 
+        self.Temp3_AssistBox = __DEFAULT_TEMP__
         
         '''
     
         '''
-        self.Temp_Const = 0.0 
-        self.Time_Const = 0.0
+        self.Temp_Const = __DEFAULT_TEMP__ 
+        self.Time_Const = __DEFAULT_VALUE__
         
         '''
    
         '''
     
-        self.InitalTemp = 0.0
-        self.InitalHoldTime = 0.0
+        self.InitalTemp = __DEFAULT_TEMP__
+        self.InitalHoldTime = __DEFAULT_VALUE__
         self.ReHeatTimes = 1
         self.SegParamSet = {}
         
