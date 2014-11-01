@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>4</number>
+    <number>3</number>
    </property>
    <widget class="QWidget" name="page_fid">
     <property name="geometry">
@@ -97,6 +97,9 @@
        <height>27</height>
       </rect>
      </property>
+     <property name="maximum">
+      <double>500.000000000000000</double>
+     </property>
     </widget>
     <widget class="QLabel" name="label_5">
      <property name="geometry">
@@ -119,6 +122,12 @@
        <width>81</width>
        <height>27</height>
       </rect>
+     </property>
+     <property name="decimals">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <double>500.000000000000000</double>
      </property>
     </widget>
     <widget class="QLabel" name="label_6">
@@ -169,6 +178,12 @@
        <height>27</height>
       </rect>
      </property>
+     <property name="decimals">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <double>500.000000000000000</double>
+     </property>
     </widget>
     <widget class="QDoubleSpinBox" name="MaxTemp_TCD">
      <property name="geometry">
@@ -178,6 +193,12 @@
        <width>91</width>
        <height>27</height>
       </rect>
+     </property>
+     <property name="decimals">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <double>500.000000000000000</double>
      </property>
     </widget>
     <widget class="QLabel" name="label_2">
@@ -214,6 +235,9 @@
        <width>91</width>
        <height>27</height>
       </rect>
+     </property>
+     <property name="maximum">
+      <double>500.000000000000000</double>
      </property>
     </widget>
     <widget class="QComboBox" name="LoadGasTCD">
@@ -297,6 +321,9 @@
        <height>27</height>
       </rect>
      </property>
+     <property name="maximum">
+      <double>500.000000000000000</double>
+     </property>
     </widget>
     <widget class="QLabel" name="label_14">
      <property name="geometry">
@@ -320,6 +347,9 @@
        <height>27</height>
       </rect>
      </property>
+     <property name="maximum">
+      <double>500.000000000000000</double>
+     </property>
     </widget>
     <widget class="QDoubleSpinBox" name="Temp3_assistBox">
      <property name="geometry">
@@ -329,6 +359,9 @@
        <width>141</width>
        <height>27</height>
       </rect>
+     </property>
+     <property name="maximum">
+      <double>500.000000000000000</double>
      </property>
     </widget>
    </widget>
@@ -366,6 +399,9 @@
        <height>27</height>
       </rect>
      </property>
+     <property name="maximum">
+      <double>500.000000000000000</double>
+     </property>
     </widget>
     <widget class="QLabel" name="label_10">
      <property name="geometry">
@@ -388,6 +424,12 @@
        <width>101</width>
        <height>27</height>
       </rect>
+     </property>
+     <property name="decimals">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <double>500.000000000000000</double>
      </property>
     </widget>
    </widget>
@@ -424,6 +466,9 @@
        <width>91</width>
        <height>22</height>
       </rect>
+     </property>
+     <property name="maximum">
+      <double>500.000000000000000</double>
      </property>
     </widget>
     <widget class="QLabel" name="label_11">
