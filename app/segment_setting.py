@@ -63,6 +63,10 @@ class SegmentSetting( QtGui.QDialog ):
         self.connect(self.dlg.pbtModify,QtCore.SIGNAL("clicked()"),self.OnCheck)        
         self.connect(self.dlg.pbtExit,QtCore.SIGNAL("clicked()"),self.OnExit)        
         self.connect(self, QtCore.SIGNAL("RefreshUIData"),self.OnRefreshUIData )
+        
+        if self.SolutionParamSet.mainctrltype != 2:
+            self.dlg.label_repeat.setVisible(False)
+            self.dlg.repeat_cnt.setVisible(False)
         pass
         
     def load_data(self):
