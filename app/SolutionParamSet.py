@@ -124,9 +124,9 @@ class SolutionParamSet(object):
         ret_value = True
         try:
             if _fileName == None:
-                _fileName =os.path.join( self.filepath , self.filename + ".jxc")
+                _fileName =os.path.join( self.filepath , self.filename )
             else:
-                _fileName = _fileName  + ".jxc"
+                _fileName = _fileName  
               
             impl = xml.dom.minidom.getDOMImplementation()
             dom = impl.createDocument(None, "method_cfg_db", None)
