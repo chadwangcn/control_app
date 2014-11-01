@@ -185,7 +185,13 @@ class Solution_Mrg( QtGui.QDialog ):
                         self.emit(SIGNAL("GenSwitchCtrl") )
                     else:
                         self.emit(SIGNAL("OnFinished") )                    
-            else: 
+            elif self.SolutionParamSet.hasFID == False   and         \
+                   self.SolutionParamSet.hasTCD == False   and         \
+                   self.SolutionParamSet.hasAssistantTemp == False and \
+                   self.SolutionParamSet.hasGasBox == False :                
+                self.OnGenSegment()
+            
+            else :
                 dlg = solutionParam(self.SolutionParamSet)
                 if dlg.exec_() == 1:
                     self.SolutionParamSet.previousState = self.SolutionParamSet.currentState 
