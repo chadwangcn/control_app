@@ -172,6 +172,7 @@ class solutionParam(QtGui.QDialog):
                   "M:"+ str(self.dlg.Temp_Const_m.value())  + \
                   "S:"+ str(self.dlg.Temp_Const_s.value())
             
+            self.SolutionParamSet.InitalTemp = self.dlg.Temp_Const.value()
             self.SolutionParamSet.Temp_Const = self.dlg.Temp_Const.value()
             self.SolutionParamSet.Time_Const = int(self.dlg.Temp_Const_h.value() ) *60*60 + \
                                                int(self.dlg.Temp_Const_m.value() ) *60 +\

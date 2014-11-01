@@ -131,7 +131,7 @@ class Solution_Mrg( QtGui.QDialog ):
     def OnSave(self):
         print "On OnSave"
         if self.SolutionParamSet != None:
-            if self.SolutionParamSet.SaveCfg( self.SolutionParamSet.filepath + self.SolutionParamSet.filename ):
+            if self.SolutionParamSet.SaveCfg( self.SolutionParamSet.filepath + self.SolutionParamSet.filename + ".jxc" ):
                 print "save ok"
                 
                 self.hasCreateMethod = True
