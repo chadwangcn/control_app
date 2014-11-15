@@ -162,7 +162,8 @@ class Solution_Mrg( QtGui.QDialog ):
             print "save as fail"
             
     def OnAction(self):
-        try:            
+        try:         
+            self.SolutionParamSet.dump()   
             self.accept()
         except Exception,e:
             print Exception,":",e

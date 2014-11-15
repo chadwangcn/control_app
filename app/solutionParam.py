@@ -59,7 +59,11 @@ class solutionParam(QtGui.QDialog):
             self.dlg.Temp1_assistBox.setValue( self.SolutionParamSet.Temp1_AssistBox )
             self.dlg.Temp2_assistBox.setValue( self.SolutionParamSet.Temp2_AssistBox )
             self.dlg.Temp3_assistBox.setValue( self.SolutionParamSet.Temp3_AssistBox )
-           
+            
+        self.dlg.Temp_Const.setValue(  self.SolutionParamSet.Temp_Const )
+        self.dlg.Temp_Const_h.setValue( 0 )
+        self.dlg.Temp_Const_m.setValue( 10 )
+        self.dlg.Temp_Const_s.setValue( 0 )
     
     def OnPrevious(self):
         print "OnPrevious"

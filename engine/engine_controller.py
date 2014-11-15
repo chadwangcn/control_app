@@ -192,15 +192,26 @@ class engine_controller(DataCenter.BaseDataConsume):
         else:
             return True
         
-    def SendCfgData(self,_cfg_data):
+    '''
+    transfer the whole cfg data to the board
+    '''
+    def SendCfgData(self,_cfg_data): 
+        print "---->"  
+        _msg = ["transfer_percent",10 ] 
+        self.NotifyMsg2UI(_msg)        
+        
         if self.SendStateSync( 'Auto_Config' ) == False:
             return False 
         print "Sync Auto_Config OK"
         
+        _msg = ["transfer_percent",20 ] 
+        self.NotifyMsg2UI(_msg) 
         if self.SendSegmentData(_cfg_data) == False:
             return False
         print "SendSegmentData Ok"
         
+        _msg = ["transfer_percent",60 ] 
+        self.NotifyMsg2UI(_msg) 
         if self.SendAssitBoxData( _cfg_data ) == False:
             return False
         print "SendAssitBoxData OK"

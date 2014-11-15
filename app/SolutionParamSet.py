@@ -108,22 +108,104 @@ class SolutionParamSet(object):
         '''
         self.SwitchParamSet = {}
 
-    def dump(self):       
-        try:
+    def dump(self):
+        try:   
+            print "=======================================>> \n\n"
+            impl = xml.dom.minidom.getDOMImplementation()
+            dom = impl.createDocument(None, "method_cfg_db", None)
+            root = dom.documentElement     
+            root.setAttribute("author", "unknow" )
             
-            print 'mainctrl:' + "type_"+ str(self.mainctrltype) +\
-            " InitalTemp_"+ str( self.InitalTemp ) +\
-            " InitalHoldTime_"+ str( self.InitalHoldTime) 
+            main_item = dom.createElement('mainctrl')
+            main_item.setAttribute("type", str(self.mainctrltype) )
+            main_item.setAttribute("InitalTemp",str( self.InitalTemp ) )
+            main_item.setAttribute("InitalHoldTime",str( self.InitalHoldTime) )
+            root.appendChild(main_item)
             
             if self.mainctrltype == 0:
-                print 'const:' +\
-                'Temp_Const_'+str(self.Temp_Const) +\
-                'Time_Const_'+str(self.Time_Const)
-        
+                child_item = dom.createElement('const')    
+                child_item.setAttribute('Temp_Const',str(self.Temp_Const))
+                child_item.setAttribute('Time_Const',str(self.Time_Const))
+                root.appendChild(child_item)
+            elif self.mainctrltype == 1:
+                child_item = dom.createElement('segment')    
+                child_item.setAttribute('segment_cnt',str(len(self.SegParamSet) ))
+                for k,seg_data in self.SegParamSet.iteritems(): 
+                    '''key_str = "segment_"+str(k) '''
+                    key_str = "segment_value" 
+                    segment_item = dom.createElement( key_str )
+                    segment_item.setAttribute( "id", str(k)  )  
+                    segment_item.setAttribute( "start_temp", str(seg_data.start_temp)  )  
+                    segment_item.setAttribute( "end_temp", str(seg_data.end_temp)  )  
+                    segment_item.setAttribute( "raise_time", str(seg_data.raise_time)  )  
+                    segment_item.setAttribute( "hold_time_h", str(seg_data.hold_time_h)  )  
+                    segment_item.setAttribute( "hold_time_m", str(seg_data.hold_time_m)  ) 
+                    segment_item.setAttribute( "hold_time_s", str(seg_data.hold_time_s)  )  
+                    child_item.appendChild(segment_item)                
+                    
+                root.appendChild(child_item)
+            elif  self.mainctrltype == 2:
+                child_item = dom.createElement('resegment')                    
+                child_item.setAttribute('ReHeatTimes',str(self.ReHeatTimes))
+                child_item.setAttribute('segment_cnt',str(len(self.SegParamSet) ))
+                for k,seg_data in self.SegParamSet.iteritems():                     
+                    key_str = "segment_value"
+                    segment_item = dom.createElement( key_str )
+                    segment_item.setAttribute( "id", str(seg_data.segid)  )  
+                    segment_item.setAttribute( "start_temp", str(seg_data.start_temp)  )  
+                    segment_item.setAttribute( "end_temp", str(seg_data.end_temp)  )  
+                    segment_item.setAttribute( "raise_time", str(seg_data.raise_time)  )  
+                    segment_item.setAttribute( "hold_time_h", str(seg_data.hold_time_h)  )  
+                    segment_item.setAttribute( "hold_time_m", str(seg_data.hold_time_m)  ) 
+                    segment_item.setAttribute( "hold_time_s", str(seg_data.hold_time_s)  )  
+                    child_item.appendChild(segment_item)               
+                
+                root.appendChild(child_item)
+                            
+            if self.hasTCD:            
+                tcd_item = dom.createElement('TCD')    
+                tcd_item.setAttribute("Temp_TCD",str(self.Temp_TCD))       
+                tcd_item.setAttribute("MaxTemp_TCD",str(self.MaxTemp_TCD))       
+                tcd_item.setAttribute("LoadGas_TCD",str(self.LoadGas_TCD))   
+                tcd_item.setAttribute("BridgeCur_TCD",str(self.BridgeCur_TCD))   
+                tcd_item.setAttribute("ZoomCoin_TCD",str(self.ZoomCoin_TCD))   
+                tcd_item.setAttribute("Polar_TCD",str(self.Polar_TCD))       
+                root.appendChild(tcd_item)
+                
+            if self.hasFID:
+                fid_item = dom.createElement('FID')    
+                fid_item.setAttribute("Temp_FID",str(self.Temp_FID))       
+                fid_item.setAttribute("MaxTemp_FID",str(self.MaxTemp_FID))       
+                fid_item.setAttribute("Range_FID",str(self.Range_FID))               
+                root.appendChild(fid_item)
+                
+            if self.hasAssistantTemp:
+                Assist_item = dom.createElement('AssistBox')    
+                Assist_item.setAttribute("Temp1_AssistBox",str(self.Temp1_AssistBox))       
+                Assist_item.setAttribute("Temp2_AssistBox",str(self.Temp2_AssistBox))          
+                Assist_item.setAttribute("Temp3_AssistBox",str(self.Temp3_AssistBox))          
+                root.appendChild(Assist_item)
+                
+            if self.hasGasBox:
+                GasBox_item = dom.createElement('GasBox')    
+                GasBox_item.setAttribute("Temp_GasBox",str(self.Temp_GasBox))       
+                GasBox_item.setAttribute("MaxTemp_GasBox",str(self.MaxTemp_GasBox))      
+                root.appendChild(GasBox_item)
+                
+            if self.hasSwitchCtrl:
+                switch_item = dom.createElement('SwitchCtrl')   
+                switch_item.setAttribute("number", str(len(self.SwitchParamSet)))
+                root.appendChild(switch_item) 
+            
+            #print root.toprettyxml()
+            print dom.toprettyxml()
+            
+            print "\n<<=======================================\n"
+                   
         except Exception,e:
             print Exception,":",e
             traceback.print_exc() 
-            
+                        
     
     def SaveCfg(self,_fileName=None):
         ret_value = True

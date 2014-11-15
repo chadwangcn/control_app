@@ -21,6 +21,37 @@ UI_MAIN_WIN = "main_beta.ui"
 MODULE_TAG = "main_beta_ui"
 
 class main_beta( QtGui.QDialog  ):
+    
+    class transfer_worker(threading.Thread):
+            
+            def __init__(self,_parent):
+                '''
+                Constructor
+                '''
+                self._parent = _parent
+                self.bExit = False              
+                threading.Thread.__init__(self)          
+                self.rwlock = threading.RLock() #
+                
+            def start_async(self):
+                self.start()
+            
+            def stop_async(self):
+                self.bExit = True
+                self.Stop()
+                
+            def run(self):
+                while self.bExit == False:  
+                    self.rwlock.acquire()
+                    try:
+                        self._parent.engine.SendCfgData(self._parent.SolutionParamSet) 
+                        self._parent.OnTransferCancel()
+                        self._parent.IsSendRunning = False 
+                    except Exception,e:
+                        print Exception,":",e
+                        traceback.print_exc()
+                    self.rwlock.release()
+                    
     def __init__( self ):
         super( main_beta, self ).__init__()  
         QTextCodec.setCodecForCStrings(QTextCodec.codecForName("GB2312"))
@@ -33,6 +64,7 @@ class main_beta( QtGui.QDialog  ):
         self.hasTimeOut = False
         self.page_normal = 0 
         self.page_factory = 1 
+        self.job = None
         self.bindUI()
         self.build_engine() 
         
@@ -57,6 +89,9 @@ class main_beta( QtGui.QDialog  ):
         self.connect( self.pb_export,QtCore.SIGNAL("clicked()"),self.OnClickPbExport)
         self.connect( self.pb_factory,QtCore.SIGNAL("clicked()"),self.OnClickPbFactory)
         self.connect( self.pb_auto,QtCore.SIGNAL("clicked()"),self.OnClickPbAuto)
+        
+        self.connect( self.pb_dump,QtCore.SIGNAL("clicked()"),self.OnClickPbDump)
+        
         
         self.connect( self.sw_1,QtCore.SIGNAL("clicked()"),self.OnSwitchStateChange)
         self.connect( self.sw_2,QtCore.SIGNAL("clicked()"),self.OnSwitchStateChange)
@@ -88,6 +123,8 @@ class main_beta( QtGui.QDialog  ):
         self.tabWidget.setCurrentIndex(self.page_normal)
         self.tabWidget.setTabEnabled(self.page_factory,False) 
         self.tabWidget.setTabEnabled(self.page_normal,True) 
+        
+        self.IsSendRunning = False 
         
         '  initial lcd pad and lcd number '
         self.dial_pad.setValue(0)
@@ -197,7 +234,8 @@ class main_beta( QtGui.QDialog  ):
             elif _msg[0] == "timeout":
                 self.hasTimeOut = True
                 self.emit(SIGNAL("TimeOut") )   
-                
+            elif _msg[0] == "transfer_percent":
+                self.transfer_percent = _msg[1]
             self.emit(SIGNAL("UpdateUI") )           
                
         except Exception,e:
@@ -226,8 +264,15 @@ class main_beta( QtGui.QDialog  ):
             self.engine.SendStateAsync( 'Init_Err' ) 
         except Exception,e:
             print Exception,":",e
+            traceback.print_exc()
+              
+    def OnClickPbDump(self):
+        try:
+            self.SolutionParamSet.dump()
+        except Exception,e:
+            print Exception,":",e
             traceback.print_exc()  
-            
+        
             
     def OnClickPbAuto(self):
         try:            
@@ -313,8 +358,8 @@ class main_beta( QtGui.QDialog  ):
     
     
     def OnClickPbSend(self):
-        try:
-            self.engine.SendCfgData(self.SolutionParamSet)
+        try:            
+            self.OnTransferCfgToBoard()            
         except Exception,e:
             print Exception,":",e
             traceback.print_exc()  
@@ -380,4 +425,75 @@ class main_beta( QtGui.QDialog  ):
             print Exception,":",e
             traceback.print_exc()  
             
+    '''
+    progress dialog bar for data transfer   
     
+    '''
+            
+    def InitProgressBarDialog(self):
+        self.progress_bar = QProgressDialog("Operation in progress.", "Cancel", 0, 100);
+        self.connect(self.progress_bar, QtCore.SIGNAL("canceled()") ,self.OnTransferCancel );
+        self.transfer_t = QTimer()
+        self.connect(self.transfer_t, QtCore.SIGNAL("timeout()") ,self.OnUpDateTransferPercent );
+        self.transfer_percent = 0
+        
+   
+        
+    def OnTransferCancel(self):
+        print "Cancel transfer"
+        if self.job != None:
+            self.job.stop_async()
+            self.job = None
+            
+        self.transfer_t.stop()     
+        self.IsSendRunning = False  
+        self.progress_bar.reject()
+        '''
+         clean the task
+        '''
+    
+    def OnUpDateTransferPercent(self):
+        try:
+            self.progress_bar.setValue( self.transfer_percent)
+            if self.transfer_percent >=100:
+                self.transfer_t.stop()
+               
+            
+            self.transfer_t.setInterval(100)
+        except Exception,e:
+            print Exception,":",e
+            traceback.print_exc() 
+            
+    def StartTransferPercent(self):        
+        self.InitProgressBarDialog()
+        self.setWindowModality(Qt.WindowModal);
+        self.progress_bar.setWindowTitle("方法传输进度")        
+        self.progress_bar.setLabelText("传输中")
+        self.progress_bar.setCancelButtonText("取消传输")
+        self.progress_bar.setRange(0,100)
+        self.transfer_t.start(1)        
+        self.progress_bar.show()
+       
+        
+    def OnTransferCfgToBoard(self):        
+        try:
+            if self.IsSendRunning == False:
+                print "Begin send"
+                self.IsSendRunning = True
+                self.StartTransferPercent()
+                self.TransferThread()                
+            else:
+                print "Running, Not need to run again"
+        except Exception,e:
+            if self.IsSendRunning == True:
+                self.IsSendRunning = False
+            print Exception,":",e
+            traceback.print_exc() 
+            
+    def TransferThread(self):
+        self.job =  self.transfer_worker(self)       
+        self.job.start_async()
+                   
+       
+        
+ 
