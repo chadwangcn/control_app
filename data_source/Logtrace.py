@@ -23,7 +23,8 @@ class LogTrace():
         self.log_level = _default_level 
         self.logtrace = logging.getLogger("EngineUI") 
         
-        self.udp_send = UdpSender.UdpSender(1400,"127.0.0.1")
+        'self.udp_send = UdpSender.UdpSender(1400,"127.0.0.1")'
+        self.udp_send = UdpSender.UdpSender(1400,"0.0.0.0")
         self.udp_send.start_network()
     
         handler=logging.StreamHandler(self.udp_send)

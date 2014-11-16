@@ -338,10 +338,12 @@ class BaseDataSource(threading.Thread):
                         self.SubcriberLst[k](data)
                     self.rwlock.release()
                 except Exception,e:
-                    print e
+                    print Exception,":",e
+                    traceback.print_exc() 
                     self.rwlock.release()                          
         except Exception,e:
-            print e
+            print Exception,":",e
+            traceback.print_exc() 
             return False           
         
     

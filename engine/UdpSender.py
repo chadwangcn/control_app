@@ -22,7 +22,6 @@ class UdpSender(object):
         try:            
             self.udpsocket = socket(AF_INET, SOCK_DGRAM)  
             self.address = (self.strIP,self.nPort)
-            self.udpsocket.bind(self.address)  
             self.net_status = True          
             return True           
         except Exception,e:

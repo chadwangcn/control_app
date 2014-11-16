@@ -91,8 +91,8 @@ class engine_controller(DataCenter.BaseDataConsume):
             
             'log trace'
             
-            self.udp_src_log = UdpMonitor.UdpMonitor(1400,"127.0.0.1")                 
-            self.Center.Register("networklogtrace", self.udp_src_log)
+            self.udp_src_log = UdpMonitor.UdpMonitor(1400,"0.0.0.0")                 
+            self.Center.Register("networklogtrace", self.udp_src_log)  
             
             'udp hw_maincontroller'        
             self.udp_src = UdpMonitor.UdpMonitor(3000,"192.168.11.5")                 
@@ -149,11 +149,12 @@ class engine_controller(DataCenter.BaseDataConsume):
         '''
         Notify data to UI 
         '''
-        _tag_list= ["ex0tmp","ex1tmp","ex2tmp","ex0tmp"]
+        _tag_list= ["ex0tmp","ex1tmp","ex2tmp","ex0tmp","MainT",
+                    "Ex0T","Ex1T","Ex2T"]
         for _tag in _tag_list:
             [ret,value] = self.remote_db.get_key(_tag)        
-            if True == ret:
-                print(_tag+ " value:" +  "value")
+            if True == ret and None != value:
+                print(_tag+ " value:" +  str(value) )
                 _msg = [_tag,value ] 
                 self.NotifyMsg2UI(_msg)
             else:

@@ -183,9 +183,9 @@ class main_beta( QtGui.QDialog  ):
         try:
             self.engine = engine_controller()
             self.engine.prepare_engine(self.OnNotifyMsg)
-            self.engine.start_engine()       
-                 
-            'self.create_period_check_task() '  
+            self.engine.start_engine()    
+            self.build_period_task_pool()   
+            
         except Exception,e:
             print "error here "
             print Exception,":",e
@@ -212,35 +212,81 @@ class main_beta( QtGui.QDialog  ):
         pe.setColor(QPalette.WindowText,Qt.black)
         _label.setPalette(pe)
         
-   
-        
-    def start_period_check_task(self):
-        
-        t = threading.Timer(5,self.period_check_task,())
-        t.start()
-        
-    def create_period_check_task(self):
-        print "Before Start --> 11 "
-        self.start_period_check_task()
-        
-        '''
-        self.sched_task  = sched.scheduler(time.time,time.sleep)
-        self.sched_task.enter(2, 1, self.period_check_task, ()  )
-        self.sched_task.run()   '''
-        print "After Run"
+    def build_period_task_pool(self):
+        class period_task_pool(threading.Thread):
+            def __init__(self):
+                self.threadid= 0
+                self.bExit =False
+                threading.Thread.__init__(self)  
+                self.SubcriberLst = {}
+                self.rwlock = threading.RLock() #
             
-    def period_check_task(self):
-        '''
-         period check task
-         period =  250 ms 
-        '''
+            def run(self):
+                while self.bExit == False:
+                    try:
+                        self.rwlock.acquire()
+                        for k in self.SubcriberLst.keys():
+                            self.SubcriberLst[k]()
+                        self.rwlock.release()
+                    except Exception,e:
+                        print Exception,":",e
+                        traceback.print_exc() 
+                        self.rwlock.release()   
+                    
+            def addTask(self,_func,_name):
+                ret = False
+                try:
+                    self.rwlock.acquire()
+                    if self.SubcriberLst.has_key(_name):
+                        ret = False
+                    else:
+                        self.SubcriberLst[_name] = _func;
+                        ret = True
+                    self.rwlock.release()
+                except Exception,e:
+                    print Exception,":",e
+                    traceback.print_exc() 
+                    self.rwlock.release()   
+                return ret
+            
+            def delTask(self,_name):
+                try:
+                    self.rwlock.acquire()
+                    if self.SubcriberLst.has_key(_name):
+                        del self.SubcriberLst[_name]
+                    self.rwlock.release()
+                except Exception,e:
+                    print Exception,":",e
+                    traceback.print_exc() 
+                    self.rwlock.release()   
+            
+            def startPool(self):
+                try:
+                    self.rwlock.acquire()
+                    self.start()
+                    self.rwlock.release()
+                except Exception,e:
+                    print Exception,":",e
+                    traceback.print_exc() 
+                    self.rwlock.release()   
+            
+            def stopPool(self):
+                try:
+                    self.rwlock.acquire()
+                    self.stop() 
+                    self.rwlock.release()
+                except Exception,e:
+                    print Exception,":",e
+                    traceback.print_exc() 
+                    self.rwlock.release()   
         
-        '''
-        self.emit(SIGNAL("UpdateUI") )     
-        self.start_period_check_task()
-        '''
         
-       
+    
+    def update_ui(self):
+        self.emit(SIGNAL("UpdateUI") )    
+        
+    def send_timestamp2remote(self):
+        pass
    
     def OnUpdateUI(self): 
         self.UpdateSwStatue(0)
