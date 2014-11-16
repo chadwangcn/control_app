@@ -3,6 +3,7 @@ Created on Apr 22, 2014
 
 @author: ljwang
 '''
+import traceback
 import os  
 import stat  
 import time
@@ -27,7 +28,8 @@ class RecorderCenter(object):
                 self.fileHandle.flush()
                 self.fileHandle.close()
             except  IOError, e:
-                print e      
+                print Exception,":",e
+                traceback.print_exc()      
     
     def getRecorderFileName(self):
         try:
@@ -45,7 +47,8 @@ class RecorderCenter(object):
             
             return curPath+"/"+year+"-"+month+"-"+day+"-"+hour+"-"+miniter+"-"+sec+".bin"
         except  IOError, e:
-            print e
+             print Exception,":",e
+             traceback.print_exc() 
         return ""         
       
     
@@ -59,7 +62,8 @@ class RecorderCenter(object):
             else:
                 ret = False
         except IOError, e:
-            print e
+            print Exception,":",e
+            traceback.print_exc() 
             ret =  False;
         return ret;
     
@@ -76,7 +80,8 @@ class RecorderCenter(object):
                 self.curFileName = self.getRecorderFileName()
                 self.fileHandle = open(self.curFileName,'a+')
             except  IOError, e:
-                print e      
+                print Exception,":",e
+                traceback.print_exc()       
                 ret = False
         else:
             if self.checkFileSize( self.curFileName )  :
@@ -86,14 +91,16 @@ class RecorderCenter(object):
                     self.curFileName = self.getRecorderFileName()
                     self.fileHandle = open(self.curFileName,'a+')                    
                 except  IOError, e:
-                    print e      
+                    print Exception,":",e
+                    traceback.print_exc()       
                     ret = False
         
         try:
             self.fileHandle.write(_objectString)
             self.fileHandle.flush()
         except IOError, e:
-            print e
+            print Exception,":",e
+            traceback.print_exc() 
             ret = False
         return ret
            

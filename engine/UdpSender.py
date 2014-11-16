@@ -1,5 +1,5 @@
 #coding=utf-8
-
+import traceback
 import DataCenter
 import time
 from socket import *
@@ -27,7 +27,8 @@ class UdpSender(object):
             return True           
         except Exception,e:
             self.net_status = False
-            print e
+            print Exception,":",e
+            traceback.print_exc()  
             return False   
         
     def start_network(self):
@@ -38,7 +39,8 @@ class UdpSender(object):
             self.udpsocket.close() 
             self.net_status = False          
         except Exception,e:
-            print e
+            print Exception,":",e
+            traceback.print_exc()  
            
     def SendData(self,_data):
         error = False
@@ -47,7 +49,8 @@ class UdpSender(object):
             self.udpsocket.sendto( _data  ,self.address)  
             self.net_status = True                 
         except Exception,e:
-            print e
+            print Exception,":",e
+            traceback.print_exc()  
             error = True
             
         if error == True:

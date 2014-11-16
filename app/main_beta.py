@@ -55,7 +55,7 @@ class main_beta( QtGui.QDialog  ):
     def __init__( self ):
         super( main_beta, self ).__init__()  
         QTextCodec.setCodecForCStrings(QTextCodec.codecForName("GB2312"))
-        QTextCodec.setCodecForCStrings(QTextCodec.codecForName("UTF-8"))   
+        QTextCodec.setCodecForCStrings(QTextCodec.codecForName("UTF-8"))
         self.log = LogTrace()
         self.win = uic.loadUi( UI_PATH+UI_MAIN_WIN, self )   
         self.logtrace  = LogTrace()
@@ -66,7 +66,7 @@ class main_beta( QtGui.QDialog  ):
         self.page_factory = 1 
         self.job = None
         self.bindUI()
-        self.build_engine() 
+        self.build_engine()
         
     def bindUI(self):        
         self.label_state.setText('初始化中...')
@@ -177,15 +177,17 @@ class main_beta( QtGui.QDialog  ):
         self.horizontalScrollBar_4.setValue(0)
         self.progressBar_4.setValue(0)
         
-        self.logtrace.info( MODULE_TAG, "bindUI")
+   
     
     def build_engine(self):
         try:
             self.engine = engine_controller()
             self.engine.prepare_engine(self.OnNotifyMsg)
-            self.engine.start_engine()
-            self.create_period_check_task()    
+            self.engine.start_engine()       
+                 
+            'self.create_period_check_task() '  
         except Exception,e:
+            print "error here "
             print Exception,":",e
             traceback.print_exc() 
 
@@ -213,11 +215,11 @@ class main_beta( QtGui.QDialog  ):
    
         
     def start_period_check_task(self):
+        
         t = threading.Timer(5,self.period_check_task,())
         t.start()
         
     def create_period_check_task(self):
-        
         print "Before Start --> 11 "
         self.start_period_check_task()
         
@@ -232,10 +234,12 @@ class main_beta( QtGui.QDialog  ):
          period check task
          period =  250 ms 
         '''
+        
+        '''
         self.emit(SIGNAL("UpdateUI") )     
         self.start_period_check_task()
-        '''self.sched_task.enter(0.25,1,self.period_check_task,())        
-        self.sched_task.run() '''
+        '''
+        
        
    
     def OnUpdateUI(self): 

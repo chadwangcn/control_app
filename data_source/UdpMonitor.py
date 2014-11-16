@@ -3,7 +3,7 @@ Created on May 25, 2014
 
 @author: lijun
 '''
-
+import traceback
 from engine import *
 import time
 from socket import *
@@ -35,7 +35,8 @@ class UdpMonitor(DataCenter.BaseDataSource):
             return True           
         except Exception,e:
             self.net_status = False
-            print e
+            print Exception,":",e
+            traceback.print_exc() 
             'LogAdapter.LogPrint("DEBUG",self.__class__.__name__, self.strIP +":" + str(self.nPort)+" reTryListenUdp error")'       
             return False           
         
@@ -48,7 +49,8 @@ class UdpMonitor(DataCenter.BaseDataSource):
             self.udpsocket.close() 
             self.net_status = False          
         except Exception,e:
-            print e
+            print Exception,":",e
+            traceback.print_exc() 
             'LogAdapter.LogPrint("DEBUG",self.__class__.__name__, self.strIP +":" + str(self.nPort)+" stopDataSource") '      
            
      
@@ -65,7 +67,8 @@ class UdpMonitor(DataCenter.BaseDataSource):
                 else:
                     error = True
             except Exception,e:
-                print e 
+                print Exception,":",e
+                traceback.print_exc()  
                 error = True
                 'LogAdapter.LogPrint("DEBUG",self.__class__.__name__, self.strIP +":" + str(self.nPort)+" GetDataError") '      
            

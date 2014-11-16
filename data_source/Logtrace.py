@@ -15,6 +15,10 @@ class LogTrace():
         '''
         Constructor
         ''' 
+        self.bDebug = True
+        
+        if self.bDebug == True:
+            return 
       
         self.log_level = _default_level 
         self.logtrace = logging.getLogger("EngineUI") 
@@ -27,19 +31,35 @@ class LogTrace():
         self.logtrace.setLevel(self.log_level)  
         
         
-    def info(self,_tag,_info):        
+    def info(self,_tag,_info):  
+        if self.bDebug == True:
+            print _info
+            return   
+            
         self.logtrace.info(_info )
         
     def debug(self,_tag,_info):
+        if self.bDebug == True:
+            print _info
+            return  
         self.logtrace.debug(_info )
         
     def warning(self,_tag,_info):
+        if self.bDebug == True:
+            print _info
+            return   
         self.logtrace.warning(_info )
         
     def error(self,_tag,_info):
+        if self.bDebug == True:
+            print _info
+            return   
         self.logtrace.error(_info )
     
     def critical(self,_tag,_info):
+        if self.bDebug == True:
+            print _info
+            return   
         self.logtrace.critical(_info )
         
   

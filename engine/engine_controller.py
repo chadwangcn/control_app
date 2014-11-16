@@ -88,10 +88,8 @@ class engine_controller(DataCenter.BaseDataConsume):
             self.ui_cb = _cb
             self.PacketFactory = PacketFactory()
             self.Center = DataCenter.DataCenter()
-                          
             
             'log trace'
-            
             
             self.udp_src_log = UdpMonitor.UdpMonitor(1400,"127.0.0.1")                 
             self.Center.Register("networklogtrace", self.udp_src_log)
@@ -99,17 +97,13 @@ class engine_controller(DataCenter.BaseDataConsume):
             'udp hw_maincontroller'        
             self.udp_src = UdpMonitor.UdpMonitor(3000,"192.168.11.5")                 
             self.Center.Register("hw_maincontroller", self.udp_src)
-            
-            
-            
-            
+                        
             self.log_record = RecorderCenter.RecorderCenter("d://log","System_Log",10*1024*1024)            
             self.Center.Subcribe("networklogtrace", "networklogtrace", self.log_record.fillData)
             
             
             self.Center.Subcribe("hw_maincontroller", "local_consumer_udp", self._data_callback)  
-            
-                       
+                  
             self.udp_send = UdpSender.UdpSender(15000,"192.168.11.4")
             self.udp_send.start_network()
             
@@ -371,7 +365,9 @@ class engine_controller(DataCenter.BaseDataConsume):
                 traceback.print_exc()
     
     def period_check(self):
+        return
         print "period check start"
+        
         while self.period_task_exit == False:
             time.sleep(2)            
             try:
