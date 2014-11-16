@@ -151,12 +151,33 @@ class engine_controller(DataCenter.BaseDataConsume):
             print Exception,":",e
             traceback.print_exc()  
             
+    def NotifySubcribeData(self):
+        '''
+        Notify data to UI 
+        '''
+        _tag_list= ["ex0tmp","ex1tmp","ex2tmp","ex0tmp"]
+        for _tag in _tag_list:
+            [ret,value] = self.remote_db.get_key(_tag)        
+            if True == ret:
+                print(_tag+ " value:" +  "value")
+                _msg = [_tag,value ] 
+                self.NotifyMsg2UI(_msg)
+            else:
+                print(_tag+" not found") 
+            
+            
+            
     def NotifyMsg2UI(self,_data):
         try:         
             self.ui_cb(_data)            
         except Exception,e:
             print Exception,":",e
             traceback.print_exc()  
+            
+    def SystemHalt(self):
+        print "system halt"
+        'system halt sync state to init'
+        self.udp_send.SendData(  self.PacketFactory.BuildModeSwitch(0))
             
     def SendStateCmd(self,_state,_expect_value):      
         self.statemachine.st_cur = _state
@@ -418,11 +439,6 @@ class engine_controller(DataCenter.BaseDataConsume):
                 print Exception,":",e
                 traceback.print_exc()
                 self.db_rwlock.release()
-            
-        
-            
-    
-        
         
             
     def On_UnKonw(self,_data):
@@ -434,7 +450,8 @@ class engine_controller(DataCenter.BaseDataConsume):
             return
         
         self.remote_db.update_value_dict(key_value)  
-        self.OnCommonCheck()         
+        self.OnCommonCheck()       
+        self.NotifySubcribeData()  
         [ret,value] = self.remote_db.get_key("Mode")
         
         if False == ret:
@@ -458,6 +475,7 @@ class engine_controller(DataCenter.BaseDataConsume):
         
         self.remote_db.update_value_dict(key_value)    
         self.OnCommonCheck()       
+        self.NotifySubcribeData()
         [ret,value] = self.remote_db.get_key("Mode")   
         
         if False == ret:
@@ -483,6 +501,7 @@ class engine_controller(DataCenter.BaseDataConsume):
         
         self.remote_db.update_value_dict(key_value)
         self.OnCommonCheck()
+        self.NotifySubcribeData()
         [ret,value] = self.remote_db.get_key("Mode")   
         if False == ret:
             return         
@@ -508,7 +527,8 @@ class engine_controller(DataCenter.BaseDataConsume):
         if False == ret:
             return        
         self.remote_db.update_value_dict(key_value)  
-        self.OnCommonCheck()      
+        self.OnCommonCheck()    
+        self.NotifySubcribeData()  
         [ret,value] = self.remote_db.get_key("Mode")   
         if ret == False: 
             print "Factory  xxx"
@@ -534,6 +554,7 @@ class engine_controller(DataCenter.BaseDataConsume):
         
         self.remote_db.update_value_dict(key_value)  
         self.OnCommonCheck()  
+        self.NotifySubcribeData()
         [ret,value] = self.remote_db.get_key("Mode")   
         if ret == False: 
             return 
@@ -555,7 +576,8 @@ class engine_controller(DataCenter.BaseDataConsume):
         if False == ret:
             return        
         self.remote_db.update_value_dict(key_value) 
-        self.OnCommonCheck()  
+        self.OnCommonCheck() 
+        self.NotifySubcribeData() 
         [ret,value] = self.remote_db.get_key("Mode")   
         if ret == False: 
             return 
@@ -577,7 +599,8 @@ class engine_controller(DataCenter.BaseDataConsume):
         if False == ret:
             return        
         self.remote_db.update_value_dict(key_value) 
-        self.OnCommonCheck()   
+        self.OnCommonCheck()  
+        self.NotifySubcribeData() 
         [ret,value] = self.remote_db.get_key("Mode")   
         if ret == False: 
             return 
@@ -601,6 +624,7 @@ class engine_controller(DataCenter.BaseDataConsume):
             return        
         self.remote_db.update_value_dict(key_value)  
         self.OnCommonCheck()  
+        self.NotifySubcribeData()
         
         self.statemachine.change_state("Auto_Running") 
         self.Sync_Mode(self.statemachine.st_cur)    
@@ -616,6 +640,7 @@ class engine_controller(DataCenter.BaseDataConsume):
             return        
         self.remote_db.update_value_dict(key_value) 
         self.OnCommonCheck()  
+        self.NotifySubcribeData()
         [ret,value] = self.remote_db.get_key("Mode")   
         if ret == False: 
             return  
@@ -638,6 +663,7 @@ class engine_controller(DataCenter.BaseDataConsume):
             return        
         self.remote_db.update_value_dict(key_value)  
         self.OnCommonCheck()  
+        self.NotifySubcribeData()
         
         [ret,value] = self.remote_db.get_key("Mode")   
         if ret == False: 

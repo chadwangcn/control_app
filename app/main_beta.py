@@ -75,6 +75,31 @@ class main_beta( QtGui.QDialog  ):
         self.label_info.setText('初始化中 ...')
         self.SetLabelColor(self.label_info,"background-color:green")
         
+        self.label_ex0tmp.setText('0')
+        self.label_ex1tmp.setText('0')
+        self.label_ex2tmp.setText('0')
+        self.label_main.setText('0')
+        self.label_fid.setText('0')
+        self.label_tcd.setText('0')
+        
+        label_color = QColor(255, 122, 30, 127)
+        
+        self.SetLabelBgColor(self.label_ex0tmp,label_color)
+        self.SetLabelBgColor(self.label_ex1tmp,label_color)
+        self.SetLabelBgColor(self.label_ex2tmp,label_color)
+        self.SetLabelBgColor(self.label_main,label_color)
+        self.SetLabelBgColor(self.label_fid,label_color)
+        self.SetLabelBgColor(self.label_tcd,label_color)
+        
+        '''
+        self.SetLabelColor(self.label_ex0tmp,label_color)
+        self.SetLabelColor(self.label_ex1tmp,label_color)
+        self.SetLabelColor(self.label_ex2tmp,label_color)
+        self.SetLabelColor(self.label_main,label_color)
+        self.SetLabelColor(self.label_fid,label_color)
+        self.SetLabelColor(self.label_tcd,label_color)'''
+        
+        
         'bind pb button'
         self.connect( self.pb_halt,QtCore.SIGNAL("clicked()"),self.OnClickPbHalt)
         self.connect( self.pb_autotest,QtCore.SIGNAL("clicked()"),self.OnClickPbAutotest)
@@ -175,6 +200,16 @@ class main_beta( QtGui.QDialog  ):
         pe.setColor(QPalette.WindowText,Qt.black)
         _label.setPalette(pe)
         
+    
+    def SetLabelBgColor(self,_label,_color):    
+        ft = QFont()
+        ft.setPointSize(18)
+        _label.setFont(ft)
+        pe = QPalette()          
+        pe.setBrush(QPalette.Base,QBrush(_color));        
+        pe.setColor(QPalette.WindowText,Qt.black)
+        _label.setPalette(pe)
+        
    
         
     def start_period_check_task(self):
@@ -204,7 +239,10 @@ class main_beta( QtGui.QDialog  ):
        
    
     def OnUpdateUI(self): 
+        self.UpdateSwStatue(0)
         self.logtrace.info( MODULE_TAG, "----->bindUI")
+        
+        
         if self.engine.bTimeOut:
             self.label_state.setText('通讯错误')
             self.SetLabelColor(self.label_state,"background-color:red")
@@ -216,6 +254,16 @@ class main_beta( QtGui.QDialog  ):
             
             self.label_info.setText('系统正常运行中...')
             self.SetLabelColor(self.label_info,"background-color:green")
+     
+    def UpdateSwStatue(self,data):
+        self.checkBoxSw1.setChecked(True)
+        self.checkBoxSw2.setChecked(True)
+        self.checkBoxSw3.setChecked(True)
+        self.checkBoxSw4.setChecked(True)
+        self.checkBoxSw5.setChecked(True)
+        self.checkBoxSw6.setChecked(True)
+        self.checkBoxSw7.setChecked(True)
+        self.checkBoxSw8.setChecked(True)
     
     def OnTimeOut(self):
         pass
@@ -262,6 +310,7 @@ class main_beta( QtGui.QDialog  ):
     def OnClickPbHalt(self):
         try:            
             self.engine.SendStateAsync( 'Init_Err' ) 
+            self.engine.SystemHalt()
         except Exception,e:
             print Exception,":",e
             traceback.print_exc()

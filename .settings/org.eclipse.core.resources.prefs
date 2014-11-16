@@ -1,6 +1,7 @@
 eclipse.preferences.version=1
 encoding//app/CreateMethod.py=utf-8
 encoding//app/SolutionParamSet.py=utf-8
+encoding//app/chart.py=utf-8
 encoding//app/main_beta.py=utf-8
 encoding//app/mainui.py=utf-8
 encoding//app/mainwin.py=utf-8
@@ -8,6 +9,8 @@ encoding//app/segment_setting.py=utf-8
 encoding//app/solutionParam.py=utf-8
 encoding//app/solution_mrg.py=utf-8
 encoding//engine/DataCenter.py=utf-8
+encoding//engine/PacketFactory.py=utf-8
+encoding//engine/UdpSender.py=utf-8
 encoding//engine/async_event.py=utf-8
 encoding//engine/dbEngine.py=utf-8
 encoding//engine/engine_controller.py=utf-8
