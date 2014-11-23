@@ -149,8 +149,8 @@ class engine_controller(DataCenter.BaseDataConsume):
         '''
         Notify data to UI 
         '''
-        _tag_list= ["ex0tmp","ex1tmp","ex2tmp","ex0tmp","MainT",
-                    "Ex0T","Ex1T","Ex2T"]
+        _tag_list= ["Ex0C","Ex1C","Ex2C","MainC","MainT",
+                    "Ex0T","Ex1T","Ex2T","Door","Valve"]
         for _tag in _tag_list:
             [ret,value] = self.remote_db.get_key(_tag)        
             if True == ret and None != value:
@@ -324,9 +324,9 @@ class engine_controller(DataCenter.BaseDataConsume):
         return ret_value
     
     def send_tick(self):
-        system_delta= (datetime.datetime.now() - self.first_system_tick).seconds
+        system_delta= datetime.datetime.now() - self.first_system_tick
         'print "-------------> HeartBeat update  now: "  +  str( datetime.datetime.now() ) + " - " + str(self.first_system_tick) + " = " + str(system_delta)'
-        _packet_msg = "Tick:" + hex( system_delta )  
+        _packet_msg = "Tick:" + hex( int(system_delta.total_seconds()) )  
         self.udp_send.SendData(_packet_msg)
         
             
@@ -373,7 +373,14 @@ class engine_controller(DataCenter.BaseDataConsume):
             time.sleep(2)            
             try:
                 self.send_tick() 
+                
+                '''
+                task:
+                1. update timestamp 
+                2. timeout detect
+                '''
                 self.OnTimeOutCheck()
+                
                 self.SyncData()
                 if self.bTimeOut == True:                    
                     _msg = ["timeout",None ] 
@@ -383,6 +390,9 @@ class engine_controller(DataCenter.BaseDataConsume):
                 print Exception,":",e
                 traceback.print_exc()  
     
+    '''
+            超时检测
+    '''
     def OnTimeOutCheck(self):
         
         self.db_rwlock.acquire()
@@ -397,15 +407,15 @@ class engine_controller(DataCenter.BaseDataConsume):
         remote_delta = (self.current_remote_tick - self.last_remote_tick)/100
         
         
-        delta = systime_delta.seconds - remote_delta
+        delta = int(systime_delta.total_seconds()) - remote_delta
         if delta > 5:
             self.bTimeOut = True
         else:
             self.bTimeOut = False
-        '''    
+        
         print "sys   -----> " + str(self.current_system_tick) + " - " + str( self.last_system_tick) + " = " + str(systime_delta.seconds)
         print "remote-----> " + str(self.current_remote_tick) + " - " + str(self.last_remote_tick)  + " = " +str( remote_delta )
-        print "-----------> " + str(delta)   '''
+        print "-----------> " + str(delta)   
         self.db_rwlock.release()
             
         

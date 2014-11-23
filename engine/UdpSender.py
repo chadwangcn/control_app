@@ -44,7 +44,7 @@ class UdpSender(object):
     def SendData(self,_data):
         error = False
         try:
-            'print "-->"+ _data '           
+            print "-->"+ _data            
             self.udpsocket.sendto( _data  ,self.address)  
             self.net_status = True                 
         except Exception,e:

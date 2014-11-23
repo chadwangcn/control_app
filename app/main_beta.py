@@ -65,8 +65,10 @@ class main_beta( QtGui.QDialog  ):
         self.page_normal = 0 
         self.page_factory = 1 
         self.job = None
+        self.UIDataDb = {}
         self.bindUI()
         self.build_engine()
+        self.ui_rwlock = threading.RLock() #
         
     def bindUI(self):        
         self.label_state.setText('初始化中...')
@@ -284,14 +286,8 @@ class main_beta( QtGui.QDialog  ):
     
     def update_ui(self):
         self.emit(SIGNAL("UpdateUI") )    
-        
-    def send_timestamp2remote(self):
-        pass
    
     def OnUpdateUI(self): 
-        self.UpdateSwStatue(0)
-        self.logtrace.info( MODULE_TAG, "----->bindUI")
-        
         
         if self.engine.bTimeOut:
             self.label_state.setText('通讯错误')
@@ -304,16 +300,103 @@ class main_beta( QtGui.QDialog  ):
             
             self.label_info.setText('系统正常运行中...')
             self.SetLabelColor(self.label_info,"background-color:green")
-     
+            self.OnUpdateUI_Data()
+    
+    def OnUpdateUI_Data(self):
+        
+        self.ui_rwlock.acquire()
+        try:
+            for(key,value) in self.UIDataDb.items():
+                if key == "Door":
+                    self.lcdNumber.display(int(value))
+                elif key == "Valve":
+                    self.UpdateSwStatue( int(value) )
+                elif key == "Ex0T":
+                    self.label_ex0tmp.setText(str(value))
+                elif key == "Ex1T":
+                    self.label_ex1tmp.setText( str(value) )
+                elif key == "Ex2T":
+                    self.label_ex2tmp.setText(str(value))
+                elif key == "MainT":
+                    self.label_main.setText(str(value))
+                elif key == "Ex0C":
+                    self.progressBar_1.setValue (int(value))
+                elif key == "Ex1C":
+                    self.progressBar_2.setValue (int(value))
+                elif key == "Ex2C":
+                    self.progressBar_3.setValue (int(value))
+                elif key == "MainC":
+                    self.progressBar_4.setValue (int(value))
+            
+        except Exception,e:
+            print Exception,":",e
+            traceback.print_exc()  
+              
+        self.ui_rwlock.release()
+                 
     def UpdateSwStatue(self,data):
-        self.checkBoxSw1.setChecked(True)
-        self.checkBoxSw2.setChecked(True)
-        self.checkBoxSw3.setChecked(True)
-        self.checkBoxSw4.setChecked(True)
-        self.checkBoxSw5.setChecked(True)
-        self.checkBoxSw6.setChecked(True)
-        self.checkBoxSw7.setChecked(True)
-        self.checkBoxSw8.setChecked(True)
+        try:
+            if  (data & 0b01) == 0b01:
+                self.sw_1.setChecked(True)
+                self.checkBoxSw1.setChecked(True)
+            else:
+                self.sw_1.setChecked(False)
+                self.checkBoxSw1.setChecked(False)
+                
+            if  (data & 0b10) == 0b10:
+                self.sw_2.setChecked(True)
+                self.checkBoxSw2.setChecked(True)
+            else:
+                self.sw_2.setChecked(False)
+                self.checkBoxSw2.setChecked(False)
+                
+            if  (data & 0b100) == 0b100:
+                self.sw_3.setChecked(True)
+                self.checkBoxSw3.setChecked(True)
+            else:
+                self.sw_3.setChecked(False)
+                self.checkBoxSw3.setChecked(False)
+                
+            if  (data & 0b1000) == 0b1000:
+                self.sw_4.setChecked(True)
+                self.checkBoxSw4.setChecked(True)
+            else:
+                self.sw_4.setChecked(False)
+                self.checkBoxSw4.setChecked(False)
+                
+            if  (data & 0b10000) == 0b10000:
+                self.sw_5.setChecked(True)
+                self.checkBoxSw5.setChecked(True)
+            else:
+                self.sw_5.setChecked(False)
+                self.checkBoxSw5.setChecked(False)
+                
+            if  (data & 0b100000) == 0b100000:
+                self.sw_6.setChecked(True)
+                self.checkBoxSw6.setChecked(True)
+            else:
+                self.sw_6.setChecked(False)
+                self.checkBoxSw6.setChecked(False)
+                
+            if  (data & 0b1000000) == 0b1000000:
+                self.sw_7.setChecked(True)
+                self.checkBoxSw7.setChecked(True)
+            else:
+                self.sw_7.setChecked(False)
+                self.checkBoxSw7.setChecked(False)
+                
+            if  (data & 0b10000000) == 0b10000000:
+                self.sw_8.setChecked(True)
+                self.checkBoxSw8.setChecked(True)
+            else:
+                self.sw_8.setChecked(False)
+                self.checkBoxSw8.setChecked(False)
+                
+        except Exception,e:
+            print Exception,":",e
+            traceback.print_exc()  
+        
+        
     
     def OnTimeOut(self):
         pass
@@ -334,12 +417,29 @@ class main_beta( QtGui.QDialog  ):
                 self.emit(SIGNAL("TimeOut") )   
             elif _msg[0] == "transfer_percent":
                 self.transfer_percent = _msg[1]
-            self.emit(SIGNAL("UpdateUI") )           
-               
+            else:
+                self.OnConsumeOtherMsg(_msg)
+                 
+            self.emit(SIGNAL("UpdateUI") )                          
         except Exception,e:
             print Exception,":",e
             traceback.print_exc()  
+    
+    def OnConsumeOtherMsg(self,_msg): 
+        ''''      
+         _tag_list= ["Ex0C","Ex1C","Ex2C","MainC","MainT",
+                    "Ex0T","Ex1T","Ex2T","Door","Valve"]
             
+        '''
+        try:
+            self.ui_rwlock.acquire()
+            self.UIDataDb[ _msg[0] ] =  _msg[1]
+        except Exception,e:
+            print Exception,":",e
+            traceback.print_exc()
+        self.ui_rwlock.release()
+                
+        
     
     def OnClickPbRun(self):
         try:            
@@ -397,7 +497,8 @@ class main_beta( QtGui.QDialog  ):
             
     def OnSwitchStateChange(self):
         if self.engine.statemachine.st_remote == 'Factory':
-            print "xx"
+            print "OnFactory: sw status change"
+            pass
             
     def OnDialPadsliderMoved(self,value):        
         self.lcdNumber.display(self.dial_pad.value())
