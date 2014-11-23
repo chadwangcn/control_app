@@ -19,7 +19,7 @@ from engine import st_engine
 from engine import UdpSender
 from engine.crc import *
 from app  import SolutionParamSet
-
+from engine.period_task_pool import *
 
 EngineHost = None
 
@@ -77,11 +77,18 @@ class engine_controller(DataCenter.BaseDataConsume):
         
         self.db_rwlock = threading.RLock()
         self.first_system_tick = datetime.datetime.now()  
-        self.current_system_tick = 0 
-        self.last_system_tick = 0
+        
+        self.current_system_tick = datetime.datetime.now() 
+        self.last_system_tick = datetime.datetime.now() 
+       
         
         self.current_remote_tick = 0
         self.last_remote_tick = 0
+        
+        self.build_period_task_pool = period_task_pool()
+        self.build_period_task_pool.addTask("sync_data",self.task_sync_data,1)
+        self.build_period_task_pool.addTask("tick",self.task_tick_sync2remote(),2)
+        self.build_period_task_pool.addTask("task_timeout_check",self.task_timeout_check(),2)
       
     def prepare_engine(self,_cb):
         try:
@@ -130,13 +137,16 @@ class engine_controller(DataCenter.BaseDataConsume):
         self.period_task_exit = False   
         self.period_check_task.start()  
         
+        self.build_period_task_pool.startPool()
+        
     def stop_engine(self):
         self.bExit = True        
         self.StopBase()
         self.async_event_q.stop_async()
         self.Center.Stop()
         self.period_task_exit = True
-        self.period_check_task.Stop()          
+        self.period_check_task.Stop()        
+        self.build_period_task_pool.stopPool()  
         
     def register_handle(self, _state,_handle):
         try:
@@ -364,32 +374,30 @@ class engine_controller(DataCenter.BaseDataConsume):
             except Exception,e:
                 print Exception,":",e
                 traceback.print_exc()
-    
-    def period_check(self):
-        return
-        print "period check start"
-        
-        while self.period_task_exit == False:
-            time.sleep(2)            
-            try:
-                self.send_tick() 
                 
-                '''
-                task:
-                1. update timestamp 
-                2. timeout detect
-                '''
-                self.OnTimeOutCheck()
-                
-                self.SyncData()
-                if self.bTimeOut == True:                    
-                    _msg = ["timeout",None ] 
-                    self.NotifyMsg2UI(_msg)       
-                                        
-            except Exception,e:
+    def task_sync_data(self):
+        try:
+            self.SyncData()
+        except Exception,e:
                 print Exception,":",e
-                traceback.print_exc()  
+                traceback.print_exc() 
+                
+    def task_tick_sync2remote(self):
+        try:
+            self.send_tick() 
+        except Exception,e:
+                print Exception,":",e
+                traceback.print_exc() 
     
+    def task_timeout_check(self):
+        self.OnTimeOutCheck()
+        try:
+            if self.bTimeOut == True:                    
+                _msg = ["timeout",None ] 
+                self.NotifyMsg2UI(_msg)  
+        except Exception,e:
+                print Exception,":",e
+                traceback.print_exc()   
     '''
             超时检测
     '''
@@ -397,10 +405,7 @@ class engine_controller(DataCenter.BaseDataConsume):
         
         self.db_rwlock.acquire()
                 
-        self.current_system_tick = datetime.datetime.now()       
-        if self.last_system_tick == 0 :
-            self.last_system_tick = datetime.datetime.now() 
-            
+        self.current_system_tick = datetime.datetime.now()          
         systime_delta = self.current_system_tick - self.last_system_tick
         
         ' remote system time unit: 10ms '
@@ -424,23 +429,19 @@ class engine_controller(DataCenter.BaseDataConsume):
     def OnCommonCheck(self):
         try:
             [ret,value] = self.remote_db.get_key("Tick")  
-        
+            
             self.db_rwlock.acquire()
             
             self.db_rwlock.release()
             if True == ret:
-                    
-                if self.current_remote_tick <= 0 :
-                    self.last_remote_tick = value
-                    self.current_remote_tick = value
+                tick = int(value)
+                if self.current_remote_tick <= 0 and tick >=0 :
+                    self.last_remote_tick = tick
+                    self.current_remote_tick = tick
                 else:
                     self.last_remote_tick = self.current_remote_tick
-                    self.current_remote_tick = value
-                
-                self.last_system_tick = self.current_system_tick
-                self.current_system_tick = datetime.datetime.now()
-                if self.last_system_tick == 0 :
-                    self.last_system_tick = datetime.datetime.now() 
+                    self.current_remote_tick = tick
+                    self.last_system_tick = datetime.datetime.now()
                     
         except Exception,e:
                 print Exception,":",e

@@ -11,6 +11,7 @@ from PyQt4.QtCore import *
 from PyQt4 import QtGui, QtCore, uic
 from data_source.Logtrace import *
 from engine.engine_controller import *
+from engine.period_task_pool import *
 from solution_mrg import *
 from threading import Thread
 import  sched,time
@@ -21,7 +22,6 @@ UI_MAIN_WIN = "main_beta.ui"
 MODULE_TAG = "main_beta_ui"
 
 class main_beta( QtGui.QDialog  ):
-    
     class transfer_worker(threading.Thread):
             
             def __init__(self,_parent):
@@ -183,13 +183,28 @@ class main_beta( QtGui.QDialog  ):
     
     def build_engine(self):
         try:
+            self.build_period_task_pool = period_task_pool()
+            self.build_period_task_pool.addTask("timeout_check",self.update_ui,1)
+            
+            
             self.engine = engine_controller()
             self.engine.prepare_engine(self.OnNotifyMsg)
             self.engine.start_engine()    
-            self.build_period_task_pool()   
+            self.build_period_task_pool.startPool()
             
         except Exception,e:
             print "error here "
+            print Exception,":",e
+            traceback.print_exc() 
+    
+    def stop_engine(self):
+        try:
+            self.build_period_task_pool.stopPool()
+            self.engine.stop_engine() 
+            self.build_period_task_pool= None 
+            self.engine = None
+            
+        except Exception,e:            
             print Exception,":",e
             traceback.print_exc() 
 
@@ -214,77 +229,12 @@ class main_beta( QtGui.QDialog  ):
         pe.setColor(QPalette.WindowText,Qt.black)
         _label.setPalette(pe)
         
-    def build_period_task_pool(self):
-        class period_task_pool(threading.Thread):
-            def __init__(self):
-                self.threadid= 0
-                self.bExit =False
-                threading.Thread.__init__(self)  
-                self.SubcriberLst = {}
-                self.rwlock = threading.RLock() #
-            
-            def run(self):
-                while self.bExit == False:
-                    try:
-                        self.rwlock.acquire()
-                        for k in self.SubcriberLst.keys():
-                            self.SubcriberLst[k]()
-                        self.rwlock.release()
-                    except Exception,e:
-                        print Exception,":",e
-                        traceback.print_exc() 
-                        self.rwlock.release()   
-                    
-            def addTask(self,_func,_name):
-                ret = False
-                try:
-                    self.rwlock.acquire()
-                    if self.SubcriberLst.has_key(_name):
-                        ret = False
-                    else:
-                        self.SubcriberLst[_name] = _func;
-                        ret = True
-                    self.rwlock.release()
-                except Exception,e:
-                    print Exception,":",e
-                    traceback.print_exc() 
-                    self.rwlock.release()   
-                return ret
-            
-            def delTask(self,_name):
-                try:
-                    self.rwlock.acquire()
-                    if self.SubcriberLst.has_key(_name):
-                        del self.SubcriberLst[_name]
-                    self.rwlock.release()
-                except Exception,e:
-                    print Exception,":",e
-                    traceback.print_exc() 
-                    self.rwlock.release()   
-            
-            def startPool(self):
-                try:
-                    self.rwlock.acquire()
-                    self.start()
-                    self.rwlock.release()
-                except Exception,e:
-                    print Exception,":",e
-                    traceback.print_exc() 
-                    self.rwlock.release()   
-            
-            def stopPool(self):
-                try:
-                    self.rwlock.acquire()
-                    self.stop() 
-                    self.rwlock.release()
-                except Exception,e:
-                    print Exception,":",e
-                    traceback.print_exc() 
-                    self.rwlock.release()   
+    
         
         
     
     def update_ui(self):
+        print "====================="
         self.emit(SIGNAL("UpdateUI") )    
    
     def OnUpdateUI(self): 
