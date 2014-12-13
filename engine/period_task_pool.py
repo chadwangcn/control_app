@@ -14,7 +14,8 @@ class task_worker():
         def __init__(self,_name,_func,_period):
             self.name = _name
             self.start_time = datetime.datetime.now() 
-            self.period = _period
+            ' _period unit: ms '
+            self._period = int(_period)
             self.func = _func
             
         def do_run(self):
@@ -27,7 +28,7 @@ class task_worker():
         
         def need_run(self):
             diff = (datetime.datetime.now() - self.start_time).seconds
-            if diff >= self.period:
+            if diff >= self._period:
                 return True
             else:
                 return False

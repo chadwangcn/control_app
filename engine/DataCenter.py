@@ -199,9 +199,6 @@ class BaseDataConsume(threading.Thread):
     
     def StopBase(self):
         self.bExit = True
-        self.Stop()
-        
-    
     
     def  run(self):
         '''

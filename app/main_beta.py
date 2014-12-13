@@ -64,10 +64,15 @@ class main_beta( QtGui.QDialog  ):
         self.hasTimeOut = False
         self.page_normal = 0 
         self.page_factory = 1 
+        self.bInitSucess = True
+        self.Startup = datetime.datetime.now() 
+        self.bStartup = False
         self.job = None
         self.UIDataDb = {}
         self.bindUI()
-        self.build_engine()
+        
+        if self.build_engine() == False:
+            self.bInitSucess = False 
         self.ui_rwlock = threading.RLock() #
         
     def closeEvent (self, _event):
@@ -82,7 +87,7 @@ class main_beta( QtGui.QDialog  ):
         self.label_state.setText('开机.. 等待下位机复位')
         self.SetLabelColor(self.label_state,"background-color:green")
         
-        self.label_info.setText('开机.. 等待下位机复位')
+        self.label_info.setText('系统启动中')
         self.SetLabelColor(self.label_info,"background-color:green")
         
         self.label_ex0tmp.setText('0')
@@ -186,32 +191,28 @@ class main_beta( QtGui.QDialog  ):
         self.lineEdit_4.setText("0")
         self.horizontalScrollBar_4.setValue(0)
         self.progressBar_4.setValue(0)
-        
-   
     
     def build_engine(self):
         try:
             self.build_period_task_pool = period_task_pool()
             self.build_period_task_pool.addTask("timeout_check",self.update_ui,1)
-            
-            
             self.engine = engine_controller()
             self.engine.prepare_engine(self.OnNotifyMsg)
             self.engine.start_engine()    
             self.build_period_task_pool.startPool()
-            
+            return True
         except Exception,e:
             print "error here "
             print Exception,":",e
-            traceback.print_exc() 
+            traceback.print_exc()
+            return False 
     
     def stop_engine(self):
         try:
             self.build_period_task_pool.stopPool()
             self.engine.stop_engine() 
             self.build_period_task_pool= None 
-            self.engine = None
-            
+            self.engine = None            
         except Exception,e:            
             print Exception,":",e
             traceback.print_exc() 
@@ -226,7 +227,6 @@ class main_beta( QtGui.QDialog  ):
         pe.setBrush(QPalette.Base,QBrush(QColor(255,0,0,0)));        
         pe.setColor(QPalette.WindowText,Qt.black)
         _label.setPalette(pe)
-        
     
     def SetLabelBgColor(self,_label,_color):    
         ft = QFont()
@@ -237,27 +237,31 @@ class main_beta( QtGui.QDialog  ):
         pe.setColor(QPalette.WindowText,Qt.black)
         _label.setPalette(pe)
         
-    
-        
-        
-    
     def update_ui(self):       
         self.emit(SIGNAL("UpdateUI") )    
    
-    def OnUpdateUI(self): 
-        
+    def OnUpdateUI(self):
         if self.engine.bTimeOut:
             self.label_state.setText('通讯错误')
             self.SetLabelColor(self.label_state,"background-color:red")
-            
             self.label_info.setText('请检查网络连接...')
             self.SetLabelColor(self.label_info,"background-color:red")
-        else:            
+        elif self.bInitSucess == False:            
+            self.SetLabelColor(self.label_state,"background-color:red")
+            self.label_info.setText('启动失败')
+            self.SetLabelColor(self.label_info,"background-color:red")
+        elif self.self.bStartup == False:
+            if (datetime.datetime.now() - self.Startup).seconds > 2:
+                self.self.bStartup = True                
             self.SetLabelColor(self.label_state,"background-color:green")
-            
+            self.label_info.setText('系统启动中')
+            self.SetLabelColor(self.label_info,"background-color:green")
+        else:
+            self.SetLabelColor(self.label_state,"background-color:green")
             self.label_info.setText('系统正常运行中...')
             self.SetLabelColor(self.label_info,"background-color:green")
             self.OnUpdateUI_Data()
+            
     
     def OnUpdateUI_Data(self):
         

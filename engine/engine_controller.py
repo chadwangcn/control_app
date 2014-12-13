@@ -150,6 +150,9 @@ class engine_controller(DataCenter.BaseDataConsume):
         self.Center.Start() 
         self.async_event_q.start_async()        
         self.build_period_task_pool.startPool()
+        return self.check_all_state()
+    
+   
         
     def stop_engine(self):
         self.bExit = True        
