@@ -70,11 +70,19 @@ class main_beta( QtGui.QDialog  ):
         self.build_engine()
         self.ui_rwlock = threading.RLock() #
         
+    def closeEvent (self, _event):
+        print "closeEvent"
+        super( main_beta, self ).closeEvent(_event)
+        self.OnQuit()
+        
+    def OnQuit(self):
+        self.stop_engine()
+        
     def bindUI(self):        
-        self.label_state.setText('初始化中...')
+        self.label_state.setText('开机.. 等待下位机复位')
         self.SetLabelColor(self.label_state,"background-color:green")
         
-        self.label_info.setText('初始化中 ...')
+        self.label_info.setText('开机.. 等待下位机复位')
         self.SetLabelColor(self.label_info,"background-color:green")
         
         self.label_ex0tmp.setText('0')
@@ -233,8 +241,7 @@ class main_beta( QtGui.QDialog  ):
         
         
     
-    def update_ui(self):
-        print "====================="
+    def update_ui(self):       
         self.emit(SIGNAL("UpdateUI") )    
    
     def OnUpdateUI(self): 

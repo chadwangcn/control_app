@@ -125,6 +125,10 @@ class engine_controller(DataCenter.BaseDataConsume):
         except Exception,e:
             print Exception,":",e
             traceback.print_exc()  
+            
+            
+    def period_check(self):
+        pass
        
     
         
@@ -277,6 +281,9 @@ class engine_controller(DataCenter.BaseDataConsume):
                 continue
         return ret_value
             
+    def buildCrc(self,_data):
+        pass
+    
     def SendSegmentData(self,_cfg_data):   
         ret_value = False
         method_data = _cfg_data
@@ -300,16 +307,25 @@ class engine_controller(DataCenter.BaseDataConsume):
                 print "segment tagble is empty"
                 break
             
+            crc_str =""            
             _packet_msg = "Ta_N:"+hex(len(method_data.SegParamSet))[2:]
             for k,seg_data in method_data.SegParamSet.iteritems(): 
                 if _packet_msg == None:
                     _packet_msg = "Ts_"+str(k) + ":"+ hex( int(seg_data.start_temp*10) )[2:]   
+                    crc_str = crc_str+"%08x"%( int(seg_data.start_temp*10) )
                 else:
                     _packet_msg = _packet_msg +"," + "Ts_"+str(k) + ":"+ hex( int(seg_data.start_temp*10) )[2:]
+                    crc_str = crc_str+"%08x"%( int(seg_data.start_temp*10)  )
                                  
-                _packet_msg = _packet_msg+ ",Te_"+str(k) + ":"+ hex( int(seg_data.end_temp*10) )[2:]             
-                _packet_msg = _packet_msg+ ",Sl_"+str(k) + ":"+ hex( int(seg_data.raise_time*10) )[2:]              
+                _packet_msg = _packet_msg+ ",Te_"+str(k) + ":"+ hex( int(seg_data.end_temp*10) )[2:]    
+                crc_str = crc_str+"%08x"%( int(seg_data.end_temp*10)  )
+                         
+                _packet_msg = _packet_msg+ ",Sl_"+str(k) + ":"+ hex( int(seg_data.raise_time*10) )[2:]      
+                crc_str = crc_str+"%08x"%( int(seg_data.raise_time*10)  )
+                        
                 _packet_msg = _packet_msg+ ",t_"+str(k) + ":"+ hex( int(seg_data.hold_time_h*60*60 +seg_data.hold_time_m*60 + seg_data.hold_time_s) )[2:] 
+                crc_str = crc_str+"%08x"%( int(seg_data.hold_time_h*60*60 +seg_data.hold_time_m*60 + seg_data.hold_time_s)  )
+                
                 cnt = cnt+1                
                 if cnt >= max_cnt:
                     self.udp_send.SendData(_packet_msg)
@@ -320,7 +336,11 @@ class engine_controller(DataCenter.BaseDataConsume):
                 self.udp_send.SendData(_packet_msg)
                 
             time.sleep(2)
-            
+            print "caculate_crc :" + crc_str
+            [ status,crc_hex_value ] = caculate_crc(crc_str)
+            print [ status,crc_hex_value ]            
+            _event.expect_value = (crc_hex_value)[2:] 
+            print "_event.expect_value:"+ str(_event.expect_value)
             event_status = self.async_event_q.get_event_status(_event.name) 
             if event_status == "ok" :
                 print "send segment ok"
@@ -337,9 +357,9 @@ class engine_controller(DataCenter.BaseDataConsume):
         system_delta= datetime.datetime.now() - self.first_system_tick
         'print "-------------> HeartBeat update  now: "  +  str( datetime.datetime.now() ) + " - " + str(self.first_system_tick) + " = " + str(system_delta)'
         _packet_msg = "Tick:" + hex( int(system_delta.total_seconds()) )  
-        self.udp_send.SendData(_packet_msg)
         
-            
+        if None != self.udp_send:
+            self.udp_send.SendData(_packet_msg)    
        
     def Sync_Mode(self,_state):
         [ret,str_value] = self.statemachine.st_strtovalue(_state)        

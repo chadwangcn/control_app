@@ -15,11 +15,11 @@ class period_task_pool(threading.Thread):
     def run(self):
         while self.bExit == False:
             try:
-                time.sleep(1)
-                print "++++++++++++++"
+                time.sleep(1)                
                 self.rwlock.acquire()
                 for k in self.SubcriberLst.keys():
-                    self.SubcriberLst[k]()
+                    if None != self.SubcriberLst[k]:
+                        self.SubcriberLst[k]()
                 self.rwlock.release()
             except Exception,e:
                 print Exception,":",e
@@ -66,7 +66,8 @@ class period_task_pool(threading.Thread):
     def stopPool(self):
         try:
             self.rwlock.acquire()
-            self.stop() 
+            self.bExit = True
+            self.Stop()
             self.rwlock.release()
         except Exception,e:
             print Exception,":",e

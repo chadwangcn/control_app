@@ -92,9 +92,12 @@ class async_event(threading.Thread):
                         continue
                 
                 [ret,value] = value_db.get_key( item.key_words )  
-                if ret == True and item.key_words == "Crc" and value != None:                   
-                    item.status = "ok"
-                    continue
+                if ret == True and item.key_words == "Crc":
+                    if value == item.expect_value:     
+                        item.status = "ok"
+                    else:
+                        print "crc error,expect:"+ item.expect_value + " raw_value:" + value
+                        continue
                     
                 if ret == True and value == item.expect_value :
                     item.status = "ok"
