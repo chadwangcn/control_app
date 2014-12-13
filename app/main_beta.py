@@ -241,6 +241,9 @@ class main_beta( QtGui.QDialog  ):
         self.emit(SIGNAL("UpdateUI") )    
    
     def OnUpdateUI(self):
+        if None == self.engine:
+            return
+        
         if self.engine.bTimeOut:
             self.label_state.setText('通讯错误')
             self.SetLabelColor(self.label_state,"background-color:red")
@@ -250,9 +253,9 @@ class main_beta( QtGui.QDialog  ):
             self.SetLabelColor(self.label_state,"background-color:red")
             self.label_info.setText('启动失败')
             self.SetLabelColor(self.label_info,"background-color:red")
-        elif self.self.bStartup == False:
-            if (datetime.datetime.now() - self.Startup).seconds > 2:
-                self.self.bStartup = True                
+        elif self.bStartup == False:
+            if (datetime.datetime.now() - self.Startup).seconds > 4:
+                self.bStartup = True                
             self.SetLabelColor(self.label_state,"background-color:green")
             self.label_info.setText('系统启动中')
             self.SetLabelColor(self.label_info,"background-color:green")

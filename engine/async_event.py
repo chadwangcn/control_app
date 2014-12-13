@@ -34,7 +34,7 @@ class async_event(threading.Thread):
         self.start()
     
     def stop_async(self):
-        self.Stop()
+        self.bExit = True
         
         
     def add_event(self, _event):
@@ -125,6 +125,8 @@ class async_event(threading.Thread):
             self.rwlock.acquire()
             try:
                 for key, item in self.event_repo.iteritems():
+                    if self.bExit == True:
+                        break
                     delta = time.time() - item.start_time                     
                     if  delta > item.timeout and item.status == "unkonw":
                         'item.status = "timeout"'
@@ -134,8 +136,7 @@ class async_event(threading.Thread):
                 traceback.print_exc()
             self.rwlock.release()
             '  100ms '
-            time.sleep(0.11) 
-            
+        
 
     
     

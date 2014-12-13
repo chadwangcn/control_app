@@ -308,7 +308,7 @@ class BaseDataSource(threading.Thread):
     def StopDataCollect(self):
         self.statemachine = "stop"
         self.stopDataSource()
-        self.stop() 
+        'self.stop() '
         pass
     
     def startDataSource(self):
