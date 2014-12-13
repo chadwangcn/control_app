@@ -26,12 +26,11 @@ class task_worker():
                 traceback.print_exc()
         
         def need_run(self):
-            diff = datetime.datetime.now() - self.start_time
+            diff = (datetime.datetime.now() - self.start_time).seconds
             if diff >= self.period:
                 return True
             else:
-                return False 
-            
+                return False
             
 class period_task_pool(threading.Thread):
     def __init__(self,_max_woker=2,_default_sleep=0):
@@ -45,12 +44,14 @@ class period_task_pool(threading.Thread):
     
     def run(self):
         while self.bExit == False:
-            try:
-                time.sleep(1)                
+            try:    
                 self.rwlock.acquire()
                 for k in self.SubcriberLst.keys():
-                    if None != self.SubcriberLst[k]:
-                        self.SubcriberLst[k]()
+                    _worker = self.SubcriberLst[k]
+                    if None == _worker:
+                        continue
+                    if _worker.need_run():
+                        _worker.do_run()                    
                 self.rwlock.release()
             except Exception,e:
                 print Exception,":",e
@@ -64,7 +65,7 @@ class period_task_pool(threading.Thread):
             if self.SubcriberLst.has_key(_name):
                 ret = False
             else:
-                worker = task_worker.task_worker(_name,_func,_period)
+                worker = task_worker(_name,_func,_period)
                 self.SubcriberLst[_name] = worker;
                 ret = True
             self.rwlock.release()
@@ -98,17 +99,34 @@ class period_task_pool(threading.Thread):
     def stopPool(self):
         try:
             self.rwlock.acquire()
-            self.bExit = True
-            self.killAllWorker()
-            self.Stop()
+            self.SubcriberLst.clear()
+            self.bExit = True   
             self.rwlock.release()
         except Exception,e:
             print Exception,":",e
             traceback.print_exc() 
             self.rwlock.release() 
+   
+'''     
+sample code:    
+def task1():
+    print "No.1 " +str(datetime.datetime.now())
     
-    def creatWorkerPool(self):
-        pass
+def task2():
+    print "No.2 " +str(datetime.datetime.now())
     
-    def killAllWorker(self):
-        pass
+def task3():
+    print "No.3 " +str(datetime.datetime.now())
+    
+taskPool = period_task_pool()
+taskPool.addTask("hello",task1,1)
+taskPool.addTask("hello2",task2,5)
+taskPool.addTask("hello3",task3,2)
+taskPool.startPool()
+time.sleep(30)
+print "stopPool ------------------->"
+taskPool.stopPool()
+print "<-----------------------------"
+'''
+    
+    

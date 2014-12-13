@@ -28,6 +28,15 @@ def GetEngineContrllerInstance():
         EngineHost = engine_controller()    
     return EngineHost
 
+def task1():
+    print "No.1 " +str(datetime.datetime.now())
+    
+def task2():
+    print "No.2 " +str(datetime.datetime.now())
+    
+def task3():
+    print "No.3 " +str(datetime.datetime.now())
+
 
 class engine_controller(DataCenter.BaseDataConsume):
     '''
@@ -85,10 +94,13 @@ class engine_controller(DataCenter.BaseDataConsume):
         self.current_remote_tick = 0
         self.last_remote_tick = 0
         
-        self.build_period_task_pool = period_task_pool()
+        self.build_period_task_pool = period_task_pool()        
         self.build_period_task_pool.addTask("sync_data",self.task_sync_data,1)
-        self.build_period_task_pool.addTask("tick",self.task_tick_sync2remote(),2)
-        self.build_period_task_pool.addTask("task_timeout_check",self.task_timeout_check(),2)
+        self.build_period_task_pool.addTask("tick",self.task_tick_sync2remote,2)
+        self.build_period_task_pool.addTask("task_timeout_check",self.task_timeout_check,2)
+        
+    def test_task(self):
+        print "self.calss"
       
     def prepare_engine(self,_cb):
         try:
@@ -136,20 +148,14 @@ class engine_controller(DataCenter.BaseDataConsume):
         self.bExit = False         
         self.StartBase()      
         self.Center.Start() 
-        self.async_event_q.start_async()
-        self.period_check_task = threading.Thread(target=self.period_check) 
-        self.period_task_exit = False   
-        self.period_check_task.start()  
-        
+        self.async_event_q.start_async()        
         self.build_period_task_pool.startPool()
         
     def stop_engine(self):
         self.bExit = True        
         self.StopBase()
         self.async_event_q.stop_async()
-        self.Center.Stop()
-        self.period_task_exit = True
-        self.period_check_task.Stop()        
+        self.Center.Stop()       
         self.build_period_task_pool.stopPool()  
         
     def register_handle(self, _state,_handle):
