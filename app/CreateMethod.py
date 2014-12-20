@@ -103,5 +103,8 @@ class CreateMethod( QtGui.QDialog ):
     
     def OnExit(self):       
         self.reject()
+        
+    def OnUpData(self):
+        pass
       
  

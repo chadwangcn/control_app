@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 
 from chart import *
 from mainui import *
@@ -10,8 +10,8 @@ from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import *
 
 if __name__ == '__main__':    
-    app=QApplication(sys.argv)      
-    dialog=main_beta()  
+    app = QApplication(sys.argv)      
+    dialog = main_beta()  
     dialog.show()  
     app.exec_()  
     

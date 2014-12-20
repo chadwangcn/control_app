@@ -1,5 +1,4 @@
 #coding=utf-8
-
 import sys
 from chart import *
 from SolutionParamSet import *
@@ -22,8 +21,7 @@ UI_MAIN_WIN = "main_beta.ui"
 MODULE_TAG = "main_beta_ui"
 
 class main_beta( QtGui.QDialog  ):
-    class transfer_worker(threading.Thread):
-            
+    class transfer_worker(threading.Thread):            
             def __init__(self,_parent):
                 '''
                 Constructor
@@ -38,7 +36,7 @@ class main_beta( QtGui.QDialog  ):
             
             def stop_async(self):
                 self.bExit = True
-                self.Stop()
+                
                 
             def run(self):
                 while self.bExit == False:  
@@ -255,9 +253,10 @@ class main_beta( QtGui.QDialog  ):
             self.SetLabelColor(self.label_info,"background-color:red")
         elif self.bStartup == False:
             if (datetime.datetime.now() - self.Startup).seconds > 4:
-                self.bStartup = True                
+                self.bStartup = True      
+            self.label_state.setText('系统启动中')          
             self.SetLabelColor(self.label_state,"background-color:green")
-            self.label_info.setText('系统启动中')
+            self.label_info.setText('')
             self.SetLabelColor(self.label_info,"background-color:green")
         else:
             self.SetLabelColor(self.label_state,"background-color:green")
@@ -376,6 +375,10 @@ class main_beta( QtGui.QDialog  ):
                     self.label_state.setText( _msg[1] )                    
                 self.hasTimeOut = False
                 
+                if _msg[1] == "Init_OK":
+                    print "Board Initial sucess,auto -> config state"
+                    self.OnClickPbAutoCfg()
+                
             elif _msg[0] == "timeout":
                 self.hasTimeOut = True
                 self.emit(SIGNAL("TimeOut") )   
@@ -404,6 +407,12 @@ class main_beta( QtGui.QDialog  ):
         self.ui_rwlock.release()
                 
         
+    def OnClickPbAutoCfg(self):
+        try:            
+            self.engine.SendStateAsync( 'Auto_Config' ) 
+        except Exception,e:
+            print Exception,":",e
+            traceback.print_exc()  
     
     def OnClickPbRun(self):
         try:            
@@ -609,12 +618,15 @@ class main_beta( QtGui.QDialog  ):
             self.job.stop_async()
             self.job = None
             
-        self.transfer_t.stop()     
+        "elf.transfer_t.stop()"     
         self.IsSendRunning = False  
         self.progress_bar.reject()
         '''
          clean the task
         '''
+        
+    def OnTransferOk(self):
+        pass
     
     def OnUpDateTransferPercent(self):
         try:

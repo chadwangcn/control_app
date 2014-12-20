@@ -28,16 +28,6 @@ def GetEngineContrllerInstance():
         EngineHost = engine_controller()    
     return EngineHost
 
-def task1():
-    print "No.1 " +str(datetime.datetime.now())
-    
-def task2():
-    print "No.2 " +str(datetime.datetime.now())
-    
-def task3():
-    print "No.3 " +str(datetime.datetime.now())
-
-
 class engine_controller(DataCenter.BaseDataConsume):
     '''
     main engine controller
@@ -96,12 +86,9 @@ class engine_controller(DataCenter.BaseDataConsume):
         
         self.build_period_task_pool = period_task_pool()        
         self.build_period_task_pool.addTask("sync_data",self.task_sync_data,1)
-        self.build_period_task_pool.addTask("tick",self.task_tick_sync2remote,2)
+        self.build_period_task_pool.addTask("tick",self.task_tick_sync2remote,1.5)
         self.build_period_task_pool.addTask("task_timeout_check",self.task_timeout_check,2)
-        
-    def test_task(self):
-        print "self.calss"
-      
+ 
     def prepare_engine(self,_cb):
         try:
             self.ui_cb = _cb
@@ -137,12 +124,7 @@ class engine_controller(DataCenter.BaseDataConsume):
         except Exception,e:
             print Exception,":",e
             traceback.print_exc()  
-            
-            
-    def period_check(self):
-        pass
-       
-    
+   
         
     def start_engine(self):
         self.bExit = False         
@@ -302,10 +284,8 @@ class engine_controller(DataCenter.BaseDataConsume):
         print "send segment"
         while retry_cnt > 0 :
             _event = async_event.event()
-            _event.key_words = "Crc"
-            _event.expect_value = "xxx"   
-            _event.name = "segment_cfg"             
-            self.async_event_q.add_event(_event)            
+            _event.key_words = "Crc"            
+            _event.name = "segment_cfg"           
             retry_cnt = retry_cnt -1
             max_cnt = 4
             cnt = 0
@@ -342,12 +322,15 @@ class engine_controller(DataCenter.BaseDataConsume):
             if _packet_msg != None:
                 self.udp_send.SendData(_packet_msg)
                 
-            time.sleep(2)
+            
             print "caculate_crc :" + crc_str
             [ status,crc_hex_value ] = caculate_crc(crc_str)
             print [ status,crc_hex_value ]            
             _event.expect_value = (crc_hex_value)[2:] 
             print "_event.expect_value:"+ str(_event.expect_value)
+            self.async_event_q.add_event(_event)      
+            
+            time.sleep(2)
             event_status = self.async_event_q.get_event_status(_event.name) 
             if event_status == "ok" :
                 print "send segment ok"
@@ -363,7 +346,7 @@ class engine_controller(DataCenter.BaseDataConsume):
     def send_tick(self):
         system_delta= datetime.datetime.now() - self.first_system_tick
         'print "-------------> HeartBeat update  now: "  +  str( datetime.datetime.now() ) + " - " + str(self.first_system_tick) + " = " + str(system_delta)'
-        _packet_msg = "Tick:" + hex( int(system_delta.total_seconds()) )  
+        _packet_msg = "Tick:" + hex( int(system_delta.total_seconds()) )[2:]  
         
         if None != self.udp_send:
             self.udp_send.SendData(_packet_msg)    
@@ -477,7 +460,7 @@ class engine_controller(DataCenter.BaseDataConsume):
         
             
     def On_UnKonw(self,_data):
-        print "On_UnKonw --> "+ _data
+        print "On_UnKonw <---- "+ _data
         self.async_event_q.update_event(_data)
         [ret, key_value] = DataCenter.cvs_parse(_data)
         
@@ -501,7 +484,7 @@ class engine_controller(DataCenter.BaseDataConsume):
         self.NotifyMsg2UI(_msg)
            
     def On_Init_Err(self,_data):
-        print "On_Init_Err --> "+ _data
+        print "On_Init_Err <---- "+ _data
         self.async_event_q.update_event(_data)
         [ret, key_value] = DataCenter.cvs_parse(_data)
         
@@ -528,7 +511,7 @@ class engine_controller(DataCenter.BaseDataConsume):
          
 
     def On_Init_OK(self,_data):
-        print "On_Init_OK --> "+ _data
+        print "On_Init_OK <---- "+ _data
         self.async_event_q.update_event(_data)
         [ret, key_value] = DataCenter.cvs_parse(_data)        
         if False == ret:
@@ -555,7 +538,7 @@ class engine_controller(DataCenter.BaseDataConsume):
         
         
     def On_Factory(self,_data):
-        print "On_Factory --> "+ _data
+        print "On_Factory <---- "+ _data
         self.async_event_q.update_event(_data)
         
         [ret, key_value] = DataCenter.cvs_parse(_data)        
@@ -581,7 +564,7 @@ class engine_controller(DataCenter.BaseDataConsume):
         
     
     def On_Auto_Config(self,_data):
-        print "On_Auto_Config --> "+ _data
+        print "On_Auto_Config <---- "+ _data
         self.async_event_q.update_event(_data)
         [ret, key_value] = DataCenter.cvs_parse(_data)        
         if False == ret:
@@ -605,7 +588,7 @@ class engine_controller(DataCenter.BaseDataConsume):
         self.NotifyMsg2UI(_msg)
         
     def On_Auto_Ready(self,_data):
-        print "On_Auto_Ready --> "+ _data
+        print "On_Auto_Ready <---- "+ _data
         self.async_event_q.update_event(_data)
         [ret, key_value] = DataCenter.cvs_parse(_data)        
         if False == ret:
@@ -628,7 +611,7 @@ class engine_controller(DataCenter.BaseDataConsume):
         self.NotifyMsg2UI(_msg)
     
     def On_Auto_Warmming(self,_data):
-        print "On_Auto_Warmming --> "+ _data
+        print "On_Auto_Warmming <---- "+ _data
         self.async_event_q.update_event(_data)
         [ret, key_value] = DataCenter.cvs_parse(_data)        
         if False == ret:
@@ -652,7 +635,7 @@ class engine_controller(DataCenter.BaseDataConsume):
             
         
     def On_Auto_WarmUp(self,_data):
-        print "On_Auto_WarmUp --> "+ _data
+        print "On_Auto_WarmUp <---- "+ _data
         self.async_event_q.update_event(_data)
         [ret, key_value] = DataCenter.cvs_parse(_data)        
         if False == ret:
@@ -668,7 +651,7 @@ class engine_controller(DataCenter.BaseDataConsume):
         self.NotifyMsg2UI(_msg)
     
     def On_Auto_Running(self,_data):
-        print "On_Auto_Running --> "+ _data
+        print "On_Auto_Running <---- "+ _data
         self.async_event_q.update_event(_data)
         [ret, key_value] = DataCenter.cvs_parse(_data)        
         if False == ret:
@@ -691,7 +674,7 @@ class engine_controller(DataCenter.BaseDataConsume):
         self.NotifyMsg2UI(_msg)
     
     def On_Auto_End(self,_data):
-        print "On_Auto_End --> "+ _data
+        print "On_Auto_End <---- "+ _data
         self.async_event_q.update_event(_data)
         [ret, key_value] = DataCenter.cvs_parse(_data)        
         if False == ret:

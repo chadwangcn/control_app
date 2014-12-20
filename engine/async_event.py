@@ -89,24 +89,35 @@ class async_event(threading.Thread):
                 if _data.find(item.key_words) != -1 :                    
                     if self.string_cmp(_data,item.expect_value):                
                         item.status = "ok"
+                        self.update_event_repo(item)
                         continue
                 
                 [ret,value] = value_db.get_key( item.key_words )  
-                if ret == True and item.key_words == "Crc":
-                    if value == item.expect_value:     
+                if ret == True and item.key_words == "Crc" and None != value:
+                    if str( hex(value)[2:])  == item.expect_value:     
                         item.status = "ok"
+                        self.update_event_repo(item)
+                        print "crc check ok"
                     else:
-                        print "crc error,expect:"+ item.expect_value + " raw_value:" + value
+                        print "crc error,expect:"+ str(item.expect_value) + " raw_value:" + str( hex(value)[2:])
                         continue
                     
                 if ret == True and value == item.expect_value :
                     item.status = "ok"
+                    self.update_event_repo(item)
                     continue
                 
         except Exception,e:
             print Exception,":",e
             traceback.print_exc()
         self.rwlock.release()    
+        
+    def update_event_repo(self,_event):
+        try:            
+            self.event_repo[_event.name] = _event            
+        except Exception,e:
+            print Exception,":",e
+            traceback.print_exc()
 
         
     def get_event_status(self, _event_name):  
