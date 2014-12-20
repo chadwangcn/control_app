@@ -42,12 +42,20 @@ class main_beta( QtGui.QDialog  ):
                 while self.bExit == False:  
                     self.rwlock.acquire()
                     try:
-                        self._parent.engine.SendCfgData(self._parent.SolutionParamSet) 
-                        self._parent.OnTransferCancel()
+                        if True == self._parent.engine.SendCfgData(self._parent.SolutionParamSet):
+                            print "all cfg Ok"
+                            self.bExit = True
+                            self._parent.emit(SIGNAL("Auto_Ready") ) 
+                        else:
+                            print "all cfg fail" 
+                            self._parent.emit(SIGNAL("Method_send_error") ) 
+                        'self._parent.OnTransferCancel()'
                         self._parent.IsSendRunning = False 
                     except Exception,e:
                         print Exception,":",e
                         traceback.print_exc()
+                        
+                    self.bExit = True
                     self.rwlock.release()
                     
     def __init__( self ):
@@ -149,6 +157,9 @@ class main_beta( QtGui.QDialog  ):
         
         self.connect(self, QtCore.SIGNAL("TimeOut"),self.OnTimeOut )
         self.connect(self, QtCore.SIGNAL("UpdateUI"),self.OnUpdateUI )
+        
+        self.connect(self, QtCore.SIGNAL("Auto_Ready"),self.OnTriAuto_Ready )
+        self.connect(self, QtCore.SIGNAL("Method_send_error"),self.OnSendError )
         
         self.connect( self.horizontalScrollBar_1,QtCore.SIGNAL("sliderMoved (int)"),self.OnhorizontalScrollBar_1_sliderMoved )
         self.connect( self.horizontalScrollBar_1,QtCore.SIGNAL("sliderReleased"),self.OnhorizontalScrollBar_1_sliderReleased )
@@ -269,6 +280,22 @@ class main_beta( QtGui.QDialog  ):
             self.SetLabelColor(self.label_info,"background-color:green")
             self.OnUpdateUI_Data()
             
+            
+    def OnTriAuto_Ready(self):
+        print "++ OnTriAuto_Ready"
+        msgBox = QMessageBox()
+        msgBox.setText("目标传输完成");
+        msgBox.setInformativeText("是否要开始继续?");
+        msgBox.setStandardButtons(QMessageBox.Apply | QMessageBox.Cancel);
+        msgBox.setDefaultButton(QMessageBox.Apply);
+        ret = msgBox.exec_()
+        
+        if ret == QMessageBox.Apply:
+            self.OnClickPbReady()
+       
+    
+    def OnSendError(self):
+        print "++ OnSendError"
     
     def OnUpdateUI_Data(self):
         

@@ -229,11 +229,15 @@ class engine_controller(DataCenter.BaseDataConsume):
             return False
         print "SendSegmentData Ok"
         
-        _msg = ["transfer_percent",60 ] 
+        _msg = ["transfer_percent",100 ] 
         self.NotifyMsg2UI(_msg) 
+        
+        '''
         if self.SendAssitBoxData( _cfg_data ) == False:
             return False
         print "SendAssitBoxData OK"
+        '''
+        return True
        
     def SendAssitBoxData(self,_cfg_data): 
         ret_value = False
@@ -342,6 +346,13 @@ class engine_controller(DataCenter.BaseDataConsume):
                 continue
             
         return ret_value
+    
+    def send_clc_cmd(self):
+        _packet_msg = "Ta_N：0"
+        if None != self.udp_send:
+            self.udp_send.SendData(_packet_msg)
+            self.udp_send.SendData(_packet_msg)
+            self.udp_send.SendData(_packet_msg)    
     
     def send_tick(self):
         system_delta= datetime.datetime.now() - self.first_system_tick

@@ -27,6 +27,7 @@ class async_event(threading.Thread):
         '''
         self.bExit = False
         self.event_repo = {}
+        self.value_db = db_data.db_data()
         threading.Thread.__init__(self)          
         self.rwlock = threading.RLock() #
     
@@ -81,18 +82,19 @@ class async_event(threading.Thread):
                 self.rwlock.release()  
                 return
             
-            value_db = db_data.db_data()
-            value_db.update_value_dict(key_value)
+            
+            self.value_db.update_value_dict(key_value)
             
             for key,item in self.event_repo.iteritems():
                   
+                '发送报文等于接收报文'  
                 if _data.find(item.key_words) != -1 :                    
                     if self.string_cmp(_data,item.expect_value):                
                         item.status = "ok"
                         self.update_event_repo(item)
                         continue
                 
-                [ret,value] = value_db.get_key( item.key_words )  
+                [ret,value] = self.value_db.get_key( item.key_words )  
                 if ret == True and item.key_words == "Crc" and None != value:
                     if str( hex(value)[2:])  == item.expect_value:     
                         item.status = "ok"
