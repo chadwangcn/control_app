@@ -114,12 +114,21 @@ class Solution_Mrg( QtGui.QDialog ):
             tmpPath = QtGui.QFileDialog.getOpenFileName(None,"",
                                                         self.default_folder_path,self.__FILTER_TAG__,
                                                         None)
-            if self.SolutionParamSet.ReadCfg(tmpPath) == False:
-                raise Exception("segment cnt", "error") 
+            
+            
+            if self.SolutionParamSet.ReadCfg(tmpPath):
+                self.emit(SIGNAL("UpdateMethodCfgView") )
+                self.SolutionParamSet.filename = "xx"
+                self.SolutionParamSet.filepath = "xx"
+                QtGui.QMessageBox.information( self, "方法", "导入方法成功" )
+                
+            else:
+                print "load error"
+                 
         except Exception,e:
             print Exception,":",e
             traceback.print_exc()  
-            QtGui.QMessageBox.information( self, "方法", "导入方法错误" )
+            
     
     def OnEdit(self):
         try:            

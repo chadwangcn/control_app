@@ -86,8 +86,8 @@ class engine_controller(DataCenter.BaseDataConsume):
         
         self.build_period_task_pool = period_task_pool()        
         self.build_period_task_pool.addTask("sync_data",self.task_sync_data,1)
-        self.build_period_task_pool.addTask("tick",self.task_tick_sync2remote,1.5)
-        self.build_period_task_pool.addTask("task_timeout_check",self.task_timeout_check,2)
+        self.build_period_task_pool.addTask("tick",self.task_tick_sync2remote,0.5)
+        self.build_period_task_pool.addTask("task_timeout_check",self.task_timeout_check,3)
  
     def prepare_engine(self,_cb):
         try:
@@ -282,6 +282,8 @@ class engine_controller(DataCenter.BaseDataConsume):
         method_data = _cfg_data
         retry_cnt = 2
         
+        self.send_clr_crc()
+        
         if method_data == None:
             print "cfg data is empty"
             return False
@@ -344,19 +346,19 @@ class engine_controller(DataCenter.BaseDataConsume):
                 print "send segment fail"
                 ret_value = False
                 continue
-            
+                        
         return ret_value
     
-    def send_clc_cmd(self):
+    def send_clr_crc(self):
         _packet_msg = "Ta_N：0"
         if None != self.udp_send:
             self.udp_send.SendData(_packet_msg)
             self.udp_send.SendData(_packet_msg)
-            self.udp_send.SendData(_packet_msg)    
+            
     
     def send_tick(self):
         system_delta= datetime.datetime.now() - self.first_system_tick
-        'print "-------------> HeartBeat update  now: "  +  str( datetime.datetime.now() ) + " - " + str(self.first_system_tick) + " = " + str(system_delta)'
+        print "-------------> HeartBeat update  now: "  +  str( datetime.datetime.now() ) + " - " + str(self.first_system_tick) + " = " + str(system_delta.total_seconds())
         _packet_msg = "Tick:" + hex( int(system_delta.total_seconds()) )[2:]  
         
         if None != self.udp_send:
