@@ -119,6 +119,11 @@ class main_beta( QtGui.QDialog  ):
         self.connect( self.pb_solution_setting,QtCore.SIGNAL("clicked()"),self.OnClickPbSolutionSetting)
         self.connect( self.pb_send,QtCore.SIGNAL("clicked()"),self.OnClickPbSend)        
         self.connect( self.pb_run,QtCore.SIGNAL("clicked()"),self.OnClickPbRun)
+        
+        self.connect( self.pb_ready,QtCore.SIGNAL("clicked()"),self.OnClickPbReady)
+        self.connect( self.pb_Warmming,QtCore.SIGNAL("clicked()"),self.OnClickPbWarmming)
+        
+        
         self.connect( self.pb_stop,QtCore.SIGNAL("clicked()"),self.OnClickPbStop)
         self.connect( self.pb_action_1,QtCore.SIGNAL("clicked()"),self.OnClickPbAction1)
         self.connect( self.pb_action_2,QtCore.SIGNAL("clicked()"),self.OnClickPbAction2)
@@ -378,6 +383,22 @@ class main_beta( QtGui.QDialog  ):
                 if _msg[1] == "Init_OK":
                     print "Board Initial sucess,auto -> config state"
                     self.OnClickPbAutoCfg()
+                    
+                if _msg[1] == "Auto_Ready":
+                    self.pb_Warmming.setEnabled(True)
+                else:
+                    self.pb_Warmming.setEnabled(False)
+                    
+                
+                if _msg[1] == "Auto_Warmming":
+                    pass
+                
+                if _msg[1] == "Auto_WarmUp":
+                    self.pb_run.setEnabled(True)
+                else:
+                    self.pb_run.setEnabled(False)
+                
+                
                 
             elif _msg[0] == "timeout":
                 self.hasTimeOut = True
@@ -410,6 +431,20 @@ class main_beta( QtGui.QDialog  ):
     def OnClickPbAutoCfg(self):
         try:            
             self.engine.SendStateAsync( 'Auto_Config' ) 
+        except Exception,e:
+            print Exception,":",e
+            traceback.print_exc()  
+            
+    def OnClickPbReady(self):
+        try:            
+            self.engine.SendStateAsync( 'Auto_Ready' ) 
+        except Exception,e:
+            print Exception,":",e
+            traceback.print_exc()
+    
+    def OnClickPbWarmming(self):
+        try:            
+            self.engine.SendStateAsync( 'Auto_Warmming' ) 
         except Exception,e:
             print Exception,":",e
             traceback.print_exc()  
