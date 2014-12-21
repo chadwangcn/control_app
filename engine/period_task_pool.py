@@ -15,7 +15,7 @@ class task_worker():
             self.name = _name
             self.start_time = datetime.datetime.now() 
             ' _period unit: ms '
-            self._period = int(_period)
+            self._period = long(_period*1000)
             self.func = _func
             
         def do_run(self):
@@ -27,7 +27,7 @@ class task_worker():
                 traceback.print_exc()
         
         def need_run(self):
-            diff = (datetime.datetime.now() - self.start_time).seconds
+            diff = (datetime.datetime.now() - self.start_time).microseconds/1000 
             if diff >= self._period:
                 return True
             else:
