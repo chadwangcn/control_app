@@ -13,8 +13,7 @@ class UdpMonitor(DataCenter.BaseDataSource):
     '''
     UdpMonitor: listen on udp port
     '''
-
-
+    
     def __init__(self, _nPort,_strIP,):
         '''
         Constructor
@@ -29,8 +28,8 @@ class UdpMonitor(DataCenter.BaseDataSource):
     def reTryListenUdp(self):
         try:            
             self.udpsocket = socket(AF_INET, SOCK_DGRAM)  
-            self.address = (self.strIP,self.nPort)
-            self.udpsocket.bind(self.address)  
+            self.address = (self.strIP,self.nPort)            
+            self.udpsocket.bind(self.address)
             self.net_status = True          
             return True           
         except Exception,e:

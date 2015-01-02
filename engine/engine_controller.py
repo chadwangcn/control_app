@@ -84,11 +84,11 @@ class engine_controller(DataCenter.BaseDataConsume):
         self.current_remote_tick = 0
         self.last_remote_tick = 0
         
-        self.build_period_task_pool = period_task_pool()        
+        self.build_period_task_pool = period_task_pool()      
         self.build_period_task_pool.addTask("sync_data",self.task_sync_data,1)
-        self.build_period_task_pool.addTask("tick",self.task_tick_sync2remote,0.5)
-        self.build_period_task_pool.addTask("task_timeout_check",self.task_timeout_check,3)
- 
+        'self.build_period_task_pool.addTask("tick",self.task_tick_sync2remote,1)'
+        'self.build_period_task_pool.addTask("task_timeout_check",self.task_timeout_check,3)'
+         
     def prepare_engine(self,_cb):
         try:
             self.ui_cb = _cb
@@ -214,21 +214,29 @@ class engine_controller(DataCenter.BaseDataConsume):
     '''
     transfer the whole cfg data to the board
     '''
-    def SendCfgData(self,_cfg_data): 
+    def SendCfgData(self,_cfg_data,_cb_progress=None): 
         print "---->"  
         _msg = ["transfer_percent",10 ] 
+        if None != _cb_progress:
+            _cb_progress(10)
+            
         self.NotifyMsg2UI(_msg)        
         
         if self.SendStateSync( 'Auto_Config' ) == False:
             return False 
         print "Sync Auto_Config OK"
         
+        if None != _cb_progress:
+            _cb_progress(20)
+            
         _msg = ["transfer_percent",20 ] 
         self.NotifyMsg2UI(_msg) 
         if self.SendSegmentData(_cfg_data) == False:
             return False
         print "SendSegmentData Ok"
         
+        if None != _cb_progress:
+            _cb_progress(100)
         _msg = ["transfer_percent",100 ] 
         self.NotifyMsg2UI(_msg) 
         
@@ -657,8 +665,17 @@ class engine_controller(DataCenter.BaseDataConsume):
         self.OnCommonCheck()  
         self.NotifySubcribeData()
         
+        [ret,value] = self.remote_db.get_key("Mode")   
+        if ret == False: 
+            return 
+                
+        [ret,str_value] = self.statemachine.st_valuetostr(value)       
+        if ret == True:
+            self.statemachine.st_remote = str_value
+        
         self.statemachine.change_state("Auto_Running") 
-        self.Sync_Mode(self.statemachine.st_cur)    
+        if   self.statemachine.st_remote != self.statemachine.st_cur:            
+            self.Sync_Mode(self.statemachine.st_cur)       
         
         _msg = ["machine_mode",self.statemachine.st_remote ] 
         self.NotifyMsg2UI(_msg)

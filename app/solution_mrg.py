@@ -299,11 +299,7 @@ class Solution_Mrg( QtGui.QDialog ):
         
         
     def load_data(self):
-        pass
-     
-    
-  
-        
+        pass      
   
     def OnCreate(self):
         [ret ,status] = self.OnCheckValue()

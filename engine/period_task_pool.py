@@ -15,7 +15,7 @@ class task_worker():
             self.name = _name
             self.start_time = datetime.datetime.now() 
             ' _period unit: ms '
-            self._period = long(_period*1000)
+            self._period = _period*1000
             self.func = _func
             
         def do_run(self):
@@ -27,7 +27,7 @@ class task_worker():
                 traceback.print_exc()
         
         def need_run(self):
-            diff = (datetime.datetime.now() - self.start_time).microseconds/1000 
+            diff = (datetime.datetime.now() - self.start_time).seconds*1000 
             if diff >= self._period:
                 return True
             else:
@@ -108,26 +108,3 @@ class period_task_pool(threading.Thread):
             traceback.print_exc() 
             self.rwlock.release() 
    
-'''     
-sample code:    
-def task1():
-    print "No.1 " +str(datetime.datetime.now())
-    
-def task2():
-    print "No.2 " +str(datetime.datetime.now())
-    
-def task3():
-    print "No.3 " +str(datetime.datetime.now())
-    
-taskPool = period_task_pool()
-taskPool.addTask("hello",task1,1)
-taskPool.addTask("hello2",task2,5)
-taskPool.addTask("hello3",task3,2)
-taskPool.startPool()
-time.sleep(30)
-print "stopPool ------------------->"
-taskPool.stopPool()
-print "<-----------------------------"
-'''
-    
-    

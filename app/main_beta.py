@@ -11,6 +11,7 @@ from PyQt4 import QtGui, QtCore, uic
 from data_source.Logtrace import *
 from engine.engine_controller import *
 from engine.period_task_pool import *
+from TransferWorker_Win import *
 from solution_mrg import *
 from threading import Thread
 import  sched,time
@@ -21,43 +22,6 @@ UI_MAIN_WIN = "main_beta.ui"
 MODULE_TAG = "main_beta_ui"
 
 class main_beta( QtGui.QDialog  ):
-    class transfer_worker(threading.Thread):            
-            def __init__(self,_parent):
-                '''
-                Constructor
-                '''
-                self._parent = _parent
-                self.bExit = False              
-                threading.Thread.__init__(self)          
-                self.rwlock = threading.RLock() #
-                
-            def start_async(self):
-                self.start()
-            
-            def stop_async(self):
-                self.bExit = True
-                
-                
-            def run(self):
-                while self.bExit == False:  
-                    self.rwlock.acquire()
-                    try:
-                        if True == self._parent.engine.SendCfgData(self._parent.SolutionParamSet):
-                            print "all cfg Ok"
-                            self.bExit = True
-                            self._parent.emit(SIGNAL("Auto_Ready") ) 
-                        else:
-                            print "all cfg fail" 
-                            self._parent.emit(SIGNAL("Method_send_error") ) 
-                        'self._parent.OnTransferCancel()'
-                        self._parent.IsSendRunning = False 
-                    except Exception,e:
-                        print Exception,":",e
-                        traceback.print_exc()
-                        
-                    self.bExit = True
-                    self.rwlock.release()
-                    
     def __init__( self ):
         super( main_beta, self ).__init__()  
         QTextCodec.setCodecForCStrings(QTextCodec.codecForName("GB2312"))
@@ -665,15 +629,17 @@ class main_beta( QtGui.QDialog  ):
     
     '''
             
+    '''        
     def InitProgressBarDialog(self):
         self.progress_bar = QProgressDialog("Operation in progress.", "Cancel", 0, 100);
         self.connect(self.progress_bar, QtCore.SIGNAL("canceled()") ,self.OnTransferCancel );
         self.transfer_t = QTimer()
         self.connect(self.transfer_t, QtCore.SIGNAL("timeout()") ,self.OnUpDateTransferPercent );
         self.transfer_percent = 0
+        '''
         
    
-        
+    '''    
     def OnTransferCancel(self):
         print "Cancel transfer"
         if self.job != None:
@@ -683,13 +649,10 @@ class main_beta( QtGui.QDialog  ):
         "elf.transfer_t.stop()"     
         self.IsSendRunning = False  
         self.progress_bar.reject()
-        '''
-         clean the task
-        '''
         
-    def OnTransferOk(self):
-        pass
+        '''
     
+    '''
     def OnUpDateTransferPercent(self):
         try:
             self.progress_bar.setValue( self.transfer_percent)
@@ -701,7 +664,9 @@ class main_beta( QtGui.QDialog  ):
         except Exception,e:
             print Exception,":",e
             traceback.print_exc() 
+            '''
             
+    '''
     def StartTransferPercent(self):        
         self.InitProgressBarDialog()
         self.setWindowModality(Qt.WindowModal);
@@ -711,15 +676,20 @@ class main_beta( QtGui.QDialog  ):
         self.progress_bar.setRange(0,100)
         self.transfer_t.start(1)        
         self.progress_bar.show()
+        '''
        
         
     def OnTransferCfgToBoard(self):        
         try:
             if self.IsSendRunning == False:
                 print "Begin send"
-                self.IsSendRunning = True
-                self.StartTransferPercent()
-                self.TransferThread()                
+                self.IsSendRunning = True                
+                self.Progress_Ctrl = TransferWorker_Win(self)
+                self.Progress_Ctrl.StartProgress()
+                self.Progress_Ctrl.exec_()
+                print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
+                'self.StartTransferPercent()'
+                'self.TransferThread()  '              
             else:
                 print "Running, Not need to run again"
         except Exception,e:
@@ -727,11 +697,12 @@ class main_beta( QtGui.QDialog  ):
                 self.IsSendRunning = False
             print Exception,":",e
             traceback.print_exc() 
-            
+        
+    '''    
     def TransferThread(self):
         self.job =  self.transfer_worker(self)       
         self.job.start_async()
-                   
+       '''            
        
         
  
